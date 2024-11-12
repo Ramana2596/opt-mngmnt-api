@@ -10,12 +10,7 @@ const port = 4000;
 // Middleware to parse JSON
 app.use(express.json());
 
-app.use(cors({
-   origin: ['http://localhost:3000', 'https://main.dij7xkvtf71d0.amplifyapp.com'], // Replace with your client's origin
-   methods: 'GET,POST,PUT,DELETE',
-   allowedHeaders: ['Content-Type', 'Authorization'],
-   credentials: true
- }));
+app.use(cors());
 
 sql.connect(sqlConfig, err => {
    if (err) {
