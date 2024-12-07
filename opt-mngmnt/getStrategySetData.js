@@ -29,10 +29,16 @@ sql.connect(dbConfig).then(() => {
             try {
                 const result = await sql.query(`DECLARE @Game_Id NVARCHAR(20)
     DECLARE @CMD_Line NVARCHAR(100)
+    DECLARE @Game_Batch SMALLINT
+    DECLARE @Strategy_Set_No SMALLINT
     SET @Game_Id = ${req.query.gameId}
+    SET @Game_Batch = NULL
+    SET @Strategy_Set_No = NULL
     SET @CMD_Line = 'Get_Strategy'
     EXEC [dbo].[UI_Strategy_Launched_Query] 
         @Game_Id = @Game_Id,
+        @Game_Batch = @Game_Batch,
+        @Strategy_Set_No = @Strategy_Set_No
         @CMD_Line = @CMD_Line`);
                 res.json(result.recordset);
             } catch (err) {
@@ -41,12 +47,19 @@ sql.connect(dbConfig).then(() => {
             }
         } else if(req.query.type === 'getGameBatch') {
             try {
-                const result = await sql.query(`DECLARE @Game_Id NVARCHAR(20)
+                const result = await sql.query(`
+        DECLARE @Game_Id NVARCHAR(20)
     DECLARE @CMD_Line NVARCHAR(100)
+    DECLARE @Game_Batch SMALLINT
+    DECLARE @Strategy_Set_No SMALLINT
     SET @Game_Id = ${req.query.gameId}
+    SET @Game_Batch = NULL
+    SET @Strategy_Set_No = NULL
     SET @CMD_Line = 'Get_Batch'
     EXEC [dbo].[UI_Strategy_Launched_Query] 
         @Game_Id = @Game_Id,
+        @Game_Batch = @Game_Batch,
+        @Strategy_Set_No = @Strategy_Set_No
         @CMD_Line = @CMD_Line`);
                 res.json(result.recordset);
             } catch (err) {
