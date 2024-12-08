@@ -8,7 +8,7 @@ sql.connect(dbConfig).then(() => {
             try {
                 const result = await sql.query(`
 SELECT [UI_Id] as uiId
-  FROM [OpsMgt3].[dbo].[UI_Access_Mst]
+  FROM [OpsMgt3].[dbo].[UI_Access_Management]
   WHERE Role = '${req.query.userRole}'`);
                 res.json(result.recordset);
             } catch (err) {

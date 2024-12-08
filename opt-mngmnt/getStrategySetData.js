@@ -38,7 +38,7 @@ sql.connect(dbConfig).then(() => {
     EXEC [dbo].[UI_Strategy_Launched_Query] 
         @Game_Id = @Game_Id,
         @Game_Batch = @Game_Batch,
-        @Strategy_Set_No = @Strategy_Set_No
+        @Strategy_Set_No = @Strategy_Set_No,
         @CMD_Line = @CMD_Line`);
                 res.json(result.recordset);
             } catch (err) {
@@ -59,7 +59,7 @@ sql.connect(dbConfig).then(() => {
     EXEC [dbo].[UI_Strategy_Launched_Query] 
         @Game_Id = @Game_Id,
         @Game_Batch = @Game_Batch,
-        @Strategy_Set_No = @Strategy_Set_No
+        @Strategy_Set_No = @Strategy_Set_No,
         @CMD_Line = @CMD_Line`);
                 res.json(result.recordset);
             } catch (err) {
