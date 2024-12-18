@@ -1,72 +1,28 @@
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
+const moment = require('moment');
 const router = express.Router();
-
-let getFramedParams = ((cmdLineType) => {
-    switch (cmdLineType) {
-        case 'getBatch':
-            return {
-                gameBatch: null,
-                cmdLine: 'Get_Batch'
-            };
-        case 'getMarketInputId':
-            return {
-                gameBatch: null,
-                cmdLine: 'Get_Market_Input_Id'
-            };
-        case 'getPeriod':
-            return {
-                cmdLine: 'Get_Period'
-            };
-        case 'getMarketInfo':
-            return {
-                gameBatch: null,
-                cmdLine: 'Get_Market_Info'
-            };
-        case 'getPart':
-            return {
-                gameBatch: null,
-                cmdLine: 'Get_Part'
-            };
-        case 'getQtyId':
-            return {
-                gameBatch: null,
-                cmdLine: 'Get_Qty_Id'
-            };
-        case 'getPriceId':
-            return {
-                gameBatch: null,
-                cmdLine: 'Get_Price_Id'
-            };
-
-    }
-});
 
 sql.connect(dbConfig).then(() => {
     router.get('/getMarketFactorInfoInput', async (req, res) => {
-        if (req?.query?.type) {
-            let queryParams = {
-                gameId: req?.query?.gameId,
-                gameBatch: req?.query?.gameBatch,
-                cmdLine: '',
-                ...getFramedParams(req?.query?.type)
-            };
             try {
-                const result = await sql.query(`DECLARE @Game_Id NVARCHAR(20)
-    DECLARE @Game_Batch SMALLINT
-    SET @Game_Id = '${queryParams.gameId}'
-    SET @Game_Batch = ${queryParams.gameBatch}
-   EXEC [dbo].[UI_MktLead_Demand_Query] 
-        @Game_Id = @Game_Id,
-        @Game_Batch = @Game_Batch,
-        @CMD_Line = '${queryParams.cmdLine}'`);
+                const date = req?.query?.productionMonth !== 'null' ? `'${moment(req?.query?.productionMonth, 'YYYY-MM-DD').format('YYYY-MM-DD')}'` : null;
+                const query = `EXEC [dbo].[UI_Market_Factor_Query]
+        @Game_id = ${req?.query?.gameId !== 'null' ? `'${req?.query?.gameId}'` : null},
+		@Game_Batch = ${req?.query?.gameBatch !== 'null' ? req?.query?.gameBatch : null},
+		@Production_Month = ${date},
+		@Market_Input_Id = ${req?.query?.marketInputId !== 'null' ? `'${req?.query?.marketInputId}'` : null},
+		@Part_Category = ${req?.query?.partCategory !== 'null' ? `'${req?.query?.partCategory}'` : null},
+		@Ref_Type_Info = ${req?.query?.refTypeInfo !== 'null' ? `'${req?.query?.refTypeInfo}'` : null},
+		@Ref_Type_Price = ${req?.query?.refTypePrice !== 'null' ? `'${req?.query?.refTypePrice}'` : null},
+		@CMD_Line = ${req?.query?.cmdLine !== 'null' ? `'${req?.query?.cmdLine}'` : null}`;
+                const result = await sql.query(query);
                 res.json(result.recordset);
             } catch (err) {
                 console.error('Query failed:', err);
                 res.status(500).send('Internal Server Error');
             }
-        }
     });
 });
 
