@@ -6,13 +6,16 @@ const router = express.Router();
 sql.connect(dbConfig).then(() => {
     router.get('/getUserDetails', async (req, res) => {
             try {
-                const result = await sql.query(`DECLARE @User_Email nvarchar(50)
-SET @User_Email = '${req.query.userEmail}'
-SELECT [Game_Id] as gameId
-      ,[User_Login] as userEmail
-      ,[Role] as role
-  FROM [OpsMgt3].[dbo].[User_Role_Mst]
-	WHERE [User_Login] = @User_Email`);
+                const result = await sql.query(`DECLARE
+    @User_login     nvarchar(50)    = '${req.query.userEmail}',
+    @Game_Id        nvarchar(20)    = 'OpsMgt',
+    @Game_Batch     smallint        = NULL,                  
+    @Game_Team      nvarchar(10)    = NULL,                  
+    @Game_Leader    nvarchar(5)     = NULL,                  
+    @Role           nvarchar(50)    = NULL                   
+
+EXECUTE [dbo].User_Login_Team_Info 
+    @User_login, @Game_Id, @Game_Batch, @Game_Team, @Game_Leader, @Role`);
                 res.json(result.recordset);
             } catch (err) {
                 console.error('Query failed:', err);

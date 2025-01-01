@@ -19,7 +19,7 @@ sql.connect(dbConfig).then(() => {
       ,[Duration_Hours]
       ,[Max_Seats]
       ,[Max_Sessions]
-  FROM [OpsMgt].[dbo].[Game_Mst]
+  FROM [dbo].[Game_Mst]
 `;
             res.json(result.recordset);
         } catch (err) {
