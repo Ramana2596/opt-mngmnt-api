@@ -8,14 +8,10 @@ sql.connect(dbConfig).then(() => {
             try {
                 const result = await sql.query(`DECLARE
     @User_login     nvarchar(50)    = '${req.query.userEmail}',
-    @Game_Id        nvarchar(20)    = 'OpsMgt',
-    @Game_Batch     smallint        = NULL,                  
-    @Game_Team      nvarchar(10)    = NULL,                  
-    @Game_Leader    nvarchar(5)     = NULL,                  
-    @Role           nvarchar(50)    = NULL                   
+    @Game_Id        nvarchar(20)    = 'OpsMgt'
 
 EXECUTE [dbo].User_Login_Team_Info 
-    @User_login, @Game_Id, @Game_Batch, @Game_Team, @Game_Leader, @Role`);
+    @User_login, @Game_Id`);
                 res.json(result.recordset);
             } catch (err) {
                 console.error('Query failed:', err);

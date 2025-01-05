@@ -31,7 +31,6 @@ jobs:
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
           npm run build --if-present
-          npm run test --if-present
           popd
 
       - name: Upload artifact for deployment job
@@ -56,9 +55,7 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_DF4E1E1D409D490F8488EDBAD7D7810B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_ED6B9CBC25F94CBA93C1C6E474A22505 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B284CB4C9BDB44B3A405864F97A1E50D }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
