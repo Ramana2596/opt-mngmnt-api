@@ -19,17 +19,17 @@ sql.connect(dbConfig).then(() => {
                     const framedQuery = `
                     EXEC [dbo].[UI_Market_Factor_Trans] 
                         @Game_Id = '${marketFactorInfoObj?.gameId}',
-	                    @Game_Batch = ${marketFactorInfoObj?.gameBatch},
-	                    @Production_Month =  ${getFormattedDate(marketFactorInfoObj)},
-	                    @Market_Input_Id = '${marketFactorInfoObj?.marketInputId}',
-	                    @Part_no = '${marketFactorInfoObj?.partNo}',
-	                    @Quantity_Id = '${marketFactorInfoObj?.quantityId}',
-	                    @Quantity = ${marketFactorInfoObj?.quantity},
-	                    @Price_Id = '${marketFactorInfoObj?.priceId}',
-	                    @Currency = '${marketFactorInfoObj?.currency}',
-	                    @Unit_Price = ${marketFactorInfoObj?.unitPrice},
+                        @Game_Batch = ${marketFactorInfoObj?.gameBatch},
+                        @Production_Month =  ${getFormattedDate(marketFactorInfoObj)},
+                        @Market_Input_Id = '${marketFactorInfoObj?.marketInputId}',
+                        @Part_no = '${marketFactorInfoObj?.partNo}',
+                        @Quantity_Id = '${marketFactorInfoObj?.quantityId}',
+                        @Quantity = ${marketFactorInfoObj?.quantity},
+                        @Price_Id = '${marketFactorInfoObj?.priceId}',
+                        @Currency = '${marketFactorInfoObj?.currency}',
+                        @Unit_Price = ${marketFactorInfoObj?.unitPrice},
                         @Created_on = ${getFormattedDate(marketFactorInfoObj)},
-	                    @CMB_Line = '${req?.body?.cmdLine}'
+                        @CMB_Line = '${req?.body?.cmdLine}'
                     `;
                     console.log(framedQuery);
                     return sql.query(framedQuery);
@@ -39,8 +39,16 @@ sql.connect(dbConfig).then(() => {
                 res.json(results.map(result => result.recordset));
             } catch (err) {
                 console.error('Query failed:', err);
-                res.status(500).send('Internal Server Error');
+
+                if (err.originalError && err.originalError.info && err.originalError.info.message) {
+                    const errorMessage = err.originalError.info.message;
+                    res.status(400).send({ error: errorMessage });
+                } else {
+                    res.status(500).send('Internal Server Error');
+                }
             }
+        } else {
+            res.status(400).send('cmdLine is required');
         }
     });
 });
