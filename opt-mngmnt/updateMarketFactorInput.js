@@ -31,7 +31,6 @@ sql.connect(dbConfig).then(() => {
                         @Created_on = ${getFormattedDate(marketFactorInfoObj)},
                         @CMB_Line = '${req?.body?.cmdLine}'
                     `;
-                    console.log(framedQuery);
                     return sql.query(framedQuery);
                 });
 

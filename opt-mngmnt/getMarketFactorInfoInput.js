@@ -19,7 +19,6 @@ sql.connect(dbConfig).then(() => {
 		                            @Ref_Type_Info = ${req?.query?.refTypeInfo ? `'${req?.query?.refTypeInfo}'` : null},
 		                            @Ref_Type_Price = ${req?.query?.refTypePrice ? `'${req?.query?.refTypePrice}'` : null},
 		                            @CMD_Line = ${req?.query?.cmdLine ? `'${req?.query?.cmdLine}'` : null}`;
-                console.log(query);                    
                 const result = await sql.query(query);
                 res.json(result.recordset);
             } catch (err) {
