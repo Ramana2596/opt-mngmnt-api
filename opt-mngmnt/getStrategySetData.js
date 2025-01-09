@@ -11,7 +11,7 @@ sql.connect(dbConfig).then(() => {
     DECLARE @Game_Batch SMALLINT
     DECLARE @Strategy_Set_No SMALLINT
     DECLARE @CMD_Line NVARCHAR(100)
-    SET @Game_Id = ${req.query.gameId}
+    SET @Game_Id = '${req.query.gameId}'
     SET @Game_Batch = ${req.query.gameBatch}
     SET @Strategy_Set_No = ${req.query.strategySetNo}
     SET @CMD_Line = 'Launch_Strategy_Set'
@@ -31,7 +31,7 @@ sql.connect(dbConfig).then(() => {
     DECLARE @CMD_Line NVARCHAR(100)
     DECLARE @Game_Batch SMALLINT
     DECLARE @Strategy_Set_No SMALLINT
-    SET @Game_Id = ${req.query.gameId}
+    SET @Game_Id = '${req.query.gameId}'
     SET @Game_Batch = NULL
     SET @Strategy_Set_No = NULL
     SET @CMD_Line = 'Get_Strategy'
@@ -52,7 +52,7 @@ sql.connect(dbConfig).then(() => {
     DECLARE @CMD_Line NVARCHAR(100)
     DECLARE @Game_Batch SMALLINT
     DECLARE @Strategy_Set_No SMALLINT
-    SET @Game_Id = ${req.query.gameId}
+    SET @Game_Id = '${req.query.gameId}'
     SET @Game_Batch = NULL
     SET @Strategy_Set_No = NULL
     SET @CMD_Line = 'Get_Batch'
