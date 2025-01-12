@@ -19,11 +19,20 @@ sql.connect(dbConfig).then(() => {
 		                            @Ref_Type_Info = ${req?.query?.refTypeInfo ? `'${req?.query?.refTypeInfo}'` : null},
 		                            @Ref_Type_Price = ${req?.query?.refTypePrice ? `'${req?.query?.refTypePrice}'` : null},
 		                            @CMD_Line = ${req?.query?.cmdLine ? `'${req?.query?.cmdLine}'` : null}`;
+                if(req?.query.cmdLine === 'Valid_Period') {
+                  console.log(query);
+                }
                 const result = await sql.query(query);
                 res.json(result.recordset);
             } catch (err) {
-                console.error('Query failed:', err);
-                res.status(500).send('Internal Server Error');
+              console.error('Query failed:', err);
+
+              if (err.originalError && err.originalError.info && err.originalError.info.message) {
+                  const errorMessage = err.originalError.info.message;
+                  res.status(400).send({ error: errorMessage });
+              } else {
+                  res.status(500).send('Internal Server Error');
+              }
             }
     });
 });
