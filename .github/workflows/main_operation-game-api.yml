@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './opt-mngmnt' # set this to the path to your web app project directory
   NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x, 14.x, 16.x, 18.x, 20.x)
 
 jobs:
@@ -25,7 +24,7 @@ jobs:
       - name: 'Resolve Project Dependencies Using Npm'
         shell: pwsh
         run: |
-          pushd '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pushd './opt-mngmnt'
           npm install
           npm run build --if-present
           popd
@@ -34,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          path: './opt-mngmnt'
 
   deploy:
     runs-on: windows-latest
@@ -54,10 +53,13 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Set package path environment variable
+        run: echo "AZURE_FUNCTIONAPP_PACKAGE_PATH=$(System.DefaultWorkingDirectory)/opt-mngmnt" >> $GITHUB_ENV
+
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
         with:
           app-name: 'operation-game-api'
           slot-name: 'Production'
-          package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          package: './opt-mngmnt' # Full path to the deployment package
