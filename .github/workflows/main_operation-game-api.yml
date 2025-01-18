@@ -53,13 +53,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set package path environment variable
-        run: echo "AZURE_FUNCTIONAPP_PACKAGE_PATH=$GITHUB_WORKSPACE/opt-mngmnt" >> $GITHUB_ENV
-
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
         with:
           app-name: 'operation-game-api'
           slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} # Use the environment variable here
+          package: ${{ github.workspace }}/opt-mngmnt # Use the full path to the package directory
