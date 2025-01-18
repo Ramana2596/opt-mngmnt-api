@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'operation-game-api'
           slot-name: 'Production'
-          package: ${{ github.workspace }}/opt-mngmnt # Use the full path to the package directory
+          package: ${{ github.workspace }}\opt-mngmnt # Use the full path to the package directory
