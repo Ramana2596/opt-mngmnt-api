@@ -25,6 +25,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: 'List Directory Contents' 
+      # New step to list directory contents 
+        run: dir 
+        shell: pwsh
+
       - name: 'Resolve Project Dependencies Using Npm'
         shell: pwsh
         run: |
