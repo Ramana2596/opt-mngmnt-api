@@ -24,18 +24,16 @@ jobs:
       - name: 'Resolve Project Dependencies Using Npm'
         shell: pwsh
         run: |
+          pushd '.'
           npm install
           npm run build --if-present
-
-      - name: Package application
-        run: |
-          Compress-Archive -Path * -DestinationPath opt-mngmnt-api.zip
+          popd
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: './opt-mngmnt-api.zip'
+          path: '.'
 
   deploy:
     runs-on: windows-latest
@@ -55,10 +53,17 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Debug Current Directory
+        shell: pwsh
+        run: |
+          echo "Current Directory: $(pwd)"
+          echo "Listing Contents of Current Directory:"
+          dir
+
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
         with:
           app-name: 'operation-game-api'
           slot-name: 'Production'
-          package: './opt-mngmnt-api.zip' # Use the zip file
+          package: '.' # Use the full path to the package directory
