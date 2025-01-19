@@ -25,10 +25,10 @@ sql.connect(dbConfig).then(() => {
                         @Operations_Input_Id = '${operationalDecisionInfoObj?.operationsInputId}',
                         @Part_no = '${operationalDecisionInfoObj?.partNo}',
                         @Quantity_Id = '${operationalDecisionInfoObj?.quantityId}',
-                        @Quantity = ${operationalDecisionInfoObj?.quantity},
+                        @Quantity = ${Number(operationalDecisionInfoObj?.quantity)},
                         @Price_Id = '${operationalDecisionInfoObj?.priceId}',
                         @Currency = '${operationalDecisionInfoObj?.currency}',
-                        @Unit_Price = ${operationalDecisionInfoObj?.unitPrice},
+                        @Unit_Price = ${operationalDecisionInfoObj?.unitPrice ?? null},
                         @Created_on = ${getFormattedDate(operationalDecisionInfoObj)},
                         @CMB_Line = '${req?.body?.cmdLine}'
                     `;
