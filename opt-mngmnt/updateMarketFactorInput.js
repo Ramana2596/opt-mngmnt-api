@@ -17,20 +17,21 @@ sql.connect(dbConfig).then(() => {
             try {
                 const queries = marketFactorInfo.map(marketFactorInfoObj => {
                     const framedQuery = `
-                    EXEC [dbo].[UI_Market_Factor_Trans] 
-                        @Game_Id = '${marketFactorInfoObj?.gameId}',
-                        @Game_Batch = ${marketFactorInfoObj?.gameBatch},
-                        @Production_Month =  ${getFormattedDate(marketFactorInfoObj)},
-                        @Market_Input_Id = '${marketFactorInfoObj?.marketInputId}',
-                        @Part_no = '${marketFactorInfoObj?.partNo}',
-                        @Quantity_Id = '${marketFactorInfoObj?.quantityId}',
-                        @Quantity = ${marketFactorInfoObj?.quantity},
-                        @Price_Id = '${marketFactorInfoObj?.priceId}',
-                        @Currency = '${marketFactorInfoObj?.currency}',
-                        @Unit_Price = ${marketFactorInfoObj?.unitPrice},
-                        @Created_on = ${getFormattedDate(marketFactorInfoObj)},
-                        @CMB_Line = '${req?.body?.cmdLine}'
-                    `;
+EXEC [dbo].[UI_Market_Factor_Trans]
+    @Game_Id = ${marketFactorInfoObj?.gameId ? `'${marketFactorInfoObj.gameId}'` : 'NULL'},
+    @Game_Batch = ${marketFactorInfoObj?.gameBatch ?? 'NULL'},
+    @Production_Month = ${getFormattedDate(marketFactorInfoObj)},
+    @Market_Input_Id = ${marketFactorInfoObj?.marketInputId ? `'${marketFactorInfoObj.marketInputId}'` : 'NULL'},
+    @Part_no = ${marketFactorInfoObj?.partNo ? `'${marketFactorInfoObj.partNo}'` : 'NULL'},
+    @Quantity_Id = ${marketFactorInfoObj?.quantityId ? `'${marketFactorInfoObj.quantityId}'` : 'NULL'},
+    @Quantity = ${marketFactorInfoObj?.quantity ?? 'NULL'},
+    @Price_Id = ${marketFactorInfoObj?.priceId ? `'${marketFactorInfoObj.priceId}'` : 'NULL'},
+    @Currency = ${marketFactorInfoObj?.currency ? `'${marketFactorInfoObj.currency}'` : 'NULL'},
+    @Unit_Price = ${marketFactorInfoObj?.unitPrice ?? 'NULL'},
+    @Created_on = ${getFormattedDate(marketFactorInfoObj)},
+    @CMB_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}
+`;
+
                     return sql.query(framedQuery);
                 });
 

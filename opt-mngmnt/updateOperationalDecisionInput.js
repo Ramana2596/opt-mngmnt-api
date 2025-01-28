@@ -17,21 +17,22 @@ sql.connect(dbConfig).then(() => {
             try {
                 const queries = operationalDecisionInfo.map(operationalDecisionInfoObj => {
                     const framedQuery = `
-                    EXEC [dbo].[UI_Ops_Business_Plan_Trans] 
-                        @Game_Id = '${operationalDecisionInfoObj?.gameId}',
-                        @Game_Batch = ${operationalDecisionInfoObj?.gameBatch},
-                        @Game_Team = ${operationalDecisionInfoObj?.gameTeam},
-                        @Production_Month =  ${getFormattedDate(operationalDecisionInfoObj)},
-                        @Operations_Input_Id = '${operationalDecisionInfoObj?.operationsInputId}',
-                        @Part_no = '${operationalDecisionInfoObj?.partNo}',
-                        @Quantity_Id = '${operationalDecisionInfoObj?.quantityId}',
-                        @Quantity = ${Number(operationalDecisionInfoObj?.quantity)},
-                        @Price_Id = '${operationalDecisionInfoObj?.priceId}',
-                        @Currency = '${operationalDecisionInfoObj?.currency}',
-                        @Unit_Price = ${operationalDecisionInfoObj?.unitPrice ?? null},
-                        @Created_on = ${getFormattedDate(operationalDecisionInfoObj)},
-                        @CMB_Line = '${req?.body?.cmdLine}'
-                    `;
+EXEC [dbo].[UI_Ops_Business_Plan_Trans]
+    @Game_Id = ${operationalDecisionInfoObj?.gameId ? `'${operationalDecisionInfoObj.gameId}'` : 'NULL'},
+    @Game_Batch = ${operationalDecisionInfoObj?.gameBatch ?? 'NULL'},
+    @Game_Team = ${operationalDecisionInfoObj?.gameTeam ?? 'NULL'},
+    @Production_Month = ${getFormattedDate(operationalDecisionInfoObj)},
+    @Operations_Input_Id = ${operationalDecisionInfoObj?.operationsInputId ? `'${operationalDecisionInfoObj.operationsInputId}'` : 'NULL'},
+    @Part_no = ${operationalDecisionInfoObj?.partNo ? `'${operationalDecisionInfoObj.partNo}'` : 'NULL'},
+    @Quantity_Id = ${operationalDecisionInfoObj?.quantityId ? `'${operationalDecisionInfoObj.quantityId}'` : 'NULL'},
+    @Quantity = ${Number(operationalDecisionInfoObj?.quantity) ?? 'NULL'},
+    @Price_Id = ${operationalDecisionInfoObj?.priceId ? `'${operationalDecisionInfoObj.priceId}'` : 'NULL'},
+    @Currency = ${operationalDecisionInfoObj?.currency ? `'${operationalDecisionInfoObj.currency}'` : 'NULL'},
+    @Unit_Price = ${operationalDecisionInfoObj?.unitPrice ?? 'NULL'},
+    @Created_on = ${getFormattedDate(operationalDecisionInfoObj)},
+    @CMB_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}
+`;
+
                     return sql.query(framedQuery);
                 });
 
