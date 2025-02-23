@@ -10,10 +10,11 @@ sql.connect(dbConfig).then(() => {
             try {
                 const framedQuery = `
                         EXEC [dbo].[UI_Strategy_Launched_Trans]
-                        @Game_Id = ${req?.query?.gameId ? `${req.query.gameId}` : 'NULL'},
-                        @Game_Batch = ${req?.query?.gameBatch ? req.query.gameBatch : 'NULL'},
-                        @Strategy_Set_No = ${req?.query?.strategySetNo ? req.query.strategySetNo : 'NULL'},
+                        @Game_Id = ${req?.body?.gameId ? `${req.body.gameId}` : 'NULL'},
+                        @Game_Batch = ${req?.body?.gameBatch ? req.body.gameBatch : 'NULL'},
+                        @Strategy_Set_No = ${req?.body?.strategySetNo ? req.body.strategySetNo : 'NULL'},
                         @CMD_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}`;
+                console.log(framedQuery);
                 const results = await Promise.all(framedQuery);
                 res.json(results.map(result => result.recordset));
             } catch (err) {
