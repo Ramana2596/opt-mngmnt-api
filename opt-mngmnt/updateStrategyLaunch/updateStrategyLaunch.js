@@ -9,14 +9,15 @@ sql.connect(dbConfig).then(() => {
 
             try {
                 const framedQuery = `
-                        EXEC [dbo].[UI_Strategy_Launched_Trans]
-                        @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
-                        @Game_Batch = ${req?.body?.gameBatch ? req.body.gameBatch : 'NULL'},
-                        @Strategy_Set_No = ${req?.body?.strategySetNo ? req.body.strategySetNo : 'NULL'},
-                        @CMD_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}`;
-                console.log(framedQuery);
-                const results = await Promise.all(framedQuery);
-                res.json(results.map(result => result.recordset));
+                    EXEC [dbo].[UI_Strategy_Launched_Trans]
+                    @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
+                    @Game_Batch = ${req?.body?.gameBatch ? req.body.gameBatch : 'NULL'},
+                    @Strategy_Set_No = ${req?.body?.strategySetNo ? req.body.strategySetNo : 'NULL'},
+                    @CMD_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}
+                `;
+
+                const results = await sql.query(framedQuery);
+                res.json(results.recordset);
             } catch (err) {
                 if (err.originalError && err.originalError.info && err.originalError.info.message) {
                     const errorMessage = err.originalError.info.message;
