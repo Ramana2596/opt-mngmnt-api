@@ -1,7 +1,7 @@
 const config = {
   user: 'optMngmntAdmin',
   password: 'OperationGame1234',
-  server: "GITASIVA\\SQLEXPRESS", // e.g., localhost
+  server: "MP-BOOK\\SQLEXPRESS", // e.g., localhost
   database: 'OpsMgt',
   options: {
     encrypt: false, // Use true if you're on Windows Azure
