@@ -9,7 +9,7 @@ sql.connect(dbConfig).then(() => {
 
             try {
                 const framedQuery = `
-                        EXEC [dbo].[UI_Market_Factor_Trans]
+                        EXEC [dbo].[UI_Strategy_Launched_Trans]
                         @Game_Id = ${req?.query?.gameId ? `${req.query.gameId}` : 'NULL'},
                         @Game_Batch = ${req?.query?.gameBatch ? req.query.gameBatch : 'NULL'},
                         @Strategy_Set_No = ${req?.query?.strategySetNo ? req.query.strategySetNo : 'NULL'},
