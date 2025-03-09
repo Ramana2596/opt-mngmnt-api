@@ -12,7 +12,7 @@ sql.connect(dbConfig).then(() => {
                         EXEC [dbo].[Team_0_Play]
                             @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
                             @Game_Batch = ${req?.body?.gameBatch ? `'${req.body.gameBatch}'` : 'NULL'},
-                            @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'},
+                            @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'}
                         `;
                     const results = await sql.query(framedQuery);
                     res.json(results.recordset);
@@ -32,7 +32,7 @@ sql.connect(dbConfig).then(() => {
                         EXEC [dbo].[Team_Rollback_A_Period]
                             @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
                             @Game_Batch = ${req?.body?.gameBatch ? `'${req.body.gameBatch}'` : 'NULL'},
-                            @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'},
+                            @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'}
                         `;
                     const results = await sql.query(framedQuery);
                     res.json(results.recordset);
