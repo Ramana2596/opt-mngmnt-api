@@ -22,9 +22,7 @@ sql.connect(dbConfig).then(() => {
                                     @Market_Input_Id = ${req?.query?.marketInputId ? `'${req?.query?.marketInputId}'` : null},
                                     @Quantity_Id = ${req?.query?.quantityId ? `'${req?.query?.quantityId}'` : null},
                                     @Price_Id = ${req?.query?.priceId ? `'${req?.query?.priceId}'` : null},
-                                    @Part_no = ${req?.query?.partNo ? `'${req?.query?.partNo}'` : null},
 		                            @CMD_Line = ${req?.query?.cmdLine ? `'${req?.query?.cmdLine}'` : null}`;
-            console.log(query);
             const result = await sql.query(query);
             res.json(result.recordset);
         } catch (err) {
