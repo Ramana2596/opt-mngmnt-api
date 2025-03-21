@@ -4,7 +4,7 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getBomDataInfo', async (req, res) => {
+    router.get('/getBomInfo', async (req, res) => {
         try {
             const result = await sql.query(`
    EXEC [dbo].[UI_BOM_Info]
