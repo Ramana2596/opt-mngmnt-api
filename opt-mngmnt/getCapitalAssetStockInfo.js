@@ -7,7 +7,7 @@ sql.connect(dbConfig).then(() => {
     router.get('/getCapitalAssetStockInfo', async (req, res) => {
         try {
             const result = await sql.query(`
-   EXEC [dbo].[UI_Capital_Asset_Stock]
+   EXEC [dbo].[UI_Capital_Asset_Stock_Info]
         @Game_Id = '${req.query.gameId}',
         @Game_Batch = ${req.query.gameBatch},
         @Game_Team = '${req.query.gameTeam}'`);
