@@ -8,9 +8,8 @@ sql.connect(dbConfig).then(() => {
         try {
             const result = await sql.query(`
    EXEC [dbo].[UI_Team_Progress_Info]
-        @Game_Id = '${req.query.gameId}',
-        @Game_Batch = ${req.query.gameBatch},
-        @Game_Team = '${req.query.gameTeam}'`);
+        @Game_Id = '${req.query.gameId}'`);
+
             res.json(result.recordset);
         } catch (err) {
             console.error('Query failed:', err);
