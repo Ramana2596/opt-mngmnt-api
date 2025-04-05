@@ -7,11 +7,11 @@ sql.connect(dbConfig).then(() => {
     router.get('/getUserDetails', async (req, res) => {
             try {
                 const result = await sql.query(`DECLARE
-    @User_login     nvarchar(50)    = '${req.query.userEmail}',
-    @Game_Id        nvarchar(20)    = 'OpsMgt'
+                           @User_login     nvarchar(50)    = '${req.query.userEmail}',
+                           @Game_Id        nvarchar(20)    = 'OpsMgt'
 
-EXECUTE [dbo].User_Login_Team_Info 
-    @User_login, @Game_Id`);
+                            EXECUTE [dbo].User_Login_Team_Info 
+                               @User_login, @Game_Id`);
                 res.json(result.recordset);
             } catch (err) {
                 console.error('Query failed:', err);

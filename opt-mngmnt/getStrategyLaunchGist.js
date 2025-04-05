@@ -4,13 +4,11 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getCashBookInfo', async (req, res) => {
+    router.get('/getStrategyLaunchGist', async (req, res) => {
         try {
             const result = await sql.query(`
-   EXEC [dbo].[UI_Cash_Book_Info]
-        @Game_Id = '${req.query.gameId}',
-        @Game_Batch = ${req.query.gameBatch},
-        @Game_Team = '${req.query.gameTeam}'`);
+   EXEC [dbo].[UI_Strategy_Launch_Gist]
+        @Game_Id = ${req?.query?.gameId ? `${req.query.gameId}` : 'NULL'}`);
             res.json(result.recordset);
         } catch (err) {
             console.error('Query failed:', err);
