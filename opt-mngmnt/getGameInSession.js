@@ -1,16 +1,15 @@
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../../dbConfig');
+const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getAccountRecievableData', async (req, res) => {
+    router.get('/getGameInSession', async (req, res) => {
         try {
             const result = await sql.query(`
-   EXEC [dbo].[UI_Ac_Receivable] 
-        @Game_Id = '${req.query.gameId}',
-        @Game_Batch = ${req.query.gameBatch},
-        @Game_Team = '${req.query.gameTeam}'`);
+                            EXEC [dbo].[UI_Game_In_Session]
+                                @Game_Id = '${req.query.gameId}',
+                                @Game_Batch = ${req.query.gameBatch} `);
             res.json(result.recordset);
         } catch (err) {
             console.error('Query failed:', err);
