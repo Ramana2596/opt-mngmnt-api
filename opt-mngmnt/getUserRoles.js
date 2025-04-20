@@ -9,8 +9,6 @@ sql.connect(dbConfig).then(() => {
             const result = await sql.query(`
    EXEC [dbo].[UI_User_Roles]
         @Game_Id = '${req.query.gameId}'
-    //    @Game_Batch = ${req.query.gameBatch},
-    //    @Game_Team = '${req.query.gameTeam}'
          `);
             res.json(result.recordset);
         } catch (err) {
