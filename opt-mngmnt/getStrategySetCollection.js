@@ -7,9 +7,9 @@ sql.connect(dbConfig).then(() => {
     router.get('/getStrategySetCollection', async (req, res) => {
         try {
             const result = await sql.query(`
-   EXEC [dbo].[UI_Strategy_Set_Collection]
-        @Game_Id = '${req.query.gameId}'
-        `);
+            EXEC [dbo].[UI_Strategy_Set_Collection]
+                @Game_Id = ${req?.query?.gameId ? `${req.query.gameId}` : 'NULL'}`);
+            console.log(result);
             res.json(result.recordset);
         } catch (err) {
             console.error('Query failed:', err);
