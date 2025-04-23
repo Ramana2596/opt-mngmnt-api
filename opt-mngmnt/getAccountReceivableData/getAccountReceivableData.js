@@ -4,7 +4,7 @@ const dbConfig = require('../../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getAccountReceivableData', async (req, res) => {
+    router.get('/getAccountReceivable', async (req, res) => {
         try {
             const query = `EXEC [dbo].[UI_Ac_Receivable] 
                                 @Game_Id = '${req.query.gameId}',
