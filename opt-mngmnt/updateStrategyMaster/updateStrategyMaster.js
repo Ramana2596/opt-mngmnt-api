@@ -20,7 +20,7 @@ sql.connect(dbConfig).then(() => {
                     EXEC [dbo].[UI_Strategy_Mst_Trans] 
                         @Game_Id = ${strategyMasterObj?.gameId ? `'${strategyMasterObj.gameId}'` : 'NULL'},
                         @Strategy_Id = ${strategyMasterObj?.strategyId ? `'${strategyMasterObj.strategyId}'` : 'NULL'},
-                        @Strategy_Description = ${strategyMasterObj?.strategyDescription ? `'${strategyMasterObj.strategyDescription}'` : 'NULL'},
+                        @Strategy = ${strategyMasterObj?.strategy ? `'${strategyMasterObj.strategy}'` : 'NULL'},
                         @Business_Enabler = ${strategyMasterObj?.businessEnabler ? `'${strategyMasterObj.businessEnabler}'` : 'NULL'},
                         @Cost_Type = ${strategyMasterObj?.costType ? `'${strategyMasterObj.costType}'` : 'NULL'},
                         @Mutual_X_Group = ${strategyMasterObj?.mutualGroup ? `'${strategyMasterObj.mutualGroup}'` : 'NULL'},
