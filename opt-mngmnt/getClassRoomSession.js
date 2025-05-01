@@ -4,12 +4,13 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getGameInSession', async (req, res) => {
+    router.get('/getClassRoomSession', async (req, res) => {
         try {
             const result = await sql.query(`
-                            EXEC [dbo].[UI_Game_In_Session]
+                            EXEC [dbo].[UI_Class_Room_Session]
                                 @Game_Id = '${req.query.gameId}',
-                                @Game_Batch = ${req.query.gameBatch} `);
+                                @Game_Batch = ${req.query.gameBatch}'`);
+            console.log(result);
             res.json(result.recordset);
         } catch (err) {
             console.error('Query failed:', err);
