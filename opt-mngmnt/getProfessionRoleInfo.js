@@ -7,7 +7,7 @@ sql.connect(dbConfig).then(() => {
     router.get('/getProfessionRoleInfo', async (req, res) => {
         try {
             const result = await sql.query(`
-   EXEC [dbo].[UI_Profession_Info]
+   EXEC [dbo].[UI_Profession_Role_Info]
         @Game_Id = '${req.query.gameId}'
          `);
             res.json(result.recordset);
