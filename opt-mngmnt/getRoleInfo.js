@@ -4,10 +4,10 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getUserRoles', async (req, res) => {
+    router.get('/getRoleInfo', async (req, res) => {
         try {
             const result = await sql.query(`
-   EXEC [dbo].[UI_User_Roles]
+   EXEC [dbo].[UI_Role_Info]
         @Game_Id = '${req.query.gameId}'
          `);
             res.json(result.recordset);
