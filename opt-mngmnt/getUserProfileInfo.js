@@ -4,7 +4,7 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getPartInfo', async (req, res) => {
+    router.get('/getUserProfileInfo', async (req, res) => {
         try {
             const result = await sql.query(`
    EXEC [dbo].[UI_User_Profile_Info]
