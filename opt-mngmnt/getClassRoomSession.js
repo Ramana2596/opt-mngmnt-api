@@ -9,7 +9,7 @@ sql.connect(dbConfig).then(() => {
             const result = await sql.query(`
                             EXEC [dbo].[UI_Class_Room_Session]
                                 @Game_Id = '${req.query.gameId}',
-                                @Game_Batch = ${req.query.gameBatch}'`);
+                                @Game_Batch = ${req.query.gameBatch}`);
             console.log(result);
             res.json(result.recordset);
         } catch (err) {
