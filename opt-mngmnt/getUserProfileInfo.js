@@ -8,7 +8,7 @@ sql.connect(dbConfig).then(() => {
         try {
             const result = await sql.query(`
    EXEC [dbo].[UI_User_Profile_Info]
-        @Game_Id = '${req.query.gameId}',
+        @Game_Id = '${req.query.gameId}'
         `);
             res.json(result.recordset);
         } catch (err) {
