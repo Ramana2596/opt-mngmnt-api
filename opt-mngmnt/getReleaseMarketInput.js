@@ -11,14 +11,14 @@ router.post('/getReleaseMarketInput', async (req, res) => {
     const request = pool.request();
 
     // Only pass parameters needed for this procedure
-    const params = {/*
+    const params = {
       Game_Id: req.body.Game_Id,
       Game_Batch: req.body.Game_Batch,
-      Game_Team: req.body.Game_Team,*/
+      Game_Team: req.body.Game_Team
     };
 
     // Use helper to bind with correct types
-   // bindParams(request, params);
+    bindParams(request, params);
 
     const result = await request.execute('UI_Release_Market_Input');
     res.status(200).json(result.recordset);
