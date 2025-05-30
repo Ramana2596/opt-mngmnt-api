@@ -1,34 +1,25 @@
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
-const bindParams = require('./utils/bindParams');
+const bindParams = require('../utils/bindParams');
 
 const router = express.Router();
 
 router.post('/getStdMarketInput', async (req, res) => {
   try {
-    // Establish global connection
-    await sql.connect(dbConfig);
+    const pool = await sql.connect(dbConfig);
+    const sqlRequest = pool.request(); // renamed to avoid confusion with `req`
 
-    // Use a new request from the global connection pool
-    const splRequest = new sql.Request();
-    console.log('Request type:', typeof splRequest);
-    console.log('Request.input type:', typeof splRequest.input); // should be 'function'
-    
-    // Prepare parameters
     const params = {
       Game_Id: req.body.Game_Id,
       Game_Batch: req.body.Game_Batch,
       Game_Team: req.body.Game_Team
     };
 
-    // Bind parameters with proper types
-    bindParams(splRequest, params);
+    // Pass the correct sqlRequest, not Express req
+    bindParams(sqlRequest, params);
 
-    // Execute the stored procedure
-    const result = await splRequest.execute('UI_Std_Market_Input');
-
-    // Send response
+    const result = await sqlRequest.execute('UI_Std_Market_Input');
     res.status(200).json(result.recordset);
   } catch (err) {
     console.error('SQL Error:', err);
