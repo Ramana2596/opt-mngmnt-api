@@ -1,7 +1,7 @@
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
-const bindParams = require('../utils/bindParams');
+const bindParams = require('../opt-mngmnt/utils/bindParams');
 
 const router = express.Router();
 
