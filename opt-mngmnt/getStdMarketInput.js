@@ -11,9 +11,9 @@ router.post('/getStdMarketInput', async (req, res) => {
     await sql.connect(dbConfig);
 
     // Use a new request from the global connection pool
-    const request = new sql.Request();
-    console.log('Request type:', typeof request);
-    console.log('Request.input type:', typeof request.input); // should be 'function'
+    const splRequest = new sql.Request();
+    console.log('Request type:', typeof splRequest);
+    console.log('Request.input type:', typeof splRequest.input); // should be 'function'
     
     // Prepare parameters
     const params = {
@@ -23,10 +23,10 @@ router.post('/getStdMarketInput', async (req, res) => {
     };
 
     // Bind parameters with proper types
-    bindParams(request, params);
+    bindParams(splRequest, params);
 
     // Execute the stored procedure
-    const result = await request.execute('UI_Std_Market_Input');
+    const result = await splRequest.execute('UI_Std_Market_Input');
 
     // Send response
     res.status(200).json(result.recordset);
