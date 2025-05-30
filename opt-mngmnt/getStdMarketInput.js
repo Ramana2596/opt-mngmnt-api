@@ -12,7 +12,9 @@ router.post('/getStdMarketInput', async (req, res) => {
 
     // Use a new request from the global connection pool
     const request = new sql.Request();
-
+    console.log('Request type:', typeof request);
+    console.log('Request.input type:', typeof request.input); // should be 'function'
+    
     // Prepare parameters
     const params = {
       Game_Id: req.body.Game_Id,

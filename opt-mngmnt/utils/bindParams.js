@@ -2,6 +2,10 @@
 const paramTypes = require('./paramTypes');
 
 function bindParams(request, paramValues) {
+  
+  console.log('Inside bindParams. Type of request:', typeof request);
+  console.log('Does request.input exist?', typeof request.input);
+
   for (const [key, value] of Object.entries(paramValues)) {
     const type = paramTypes[key];
     if (type) {
