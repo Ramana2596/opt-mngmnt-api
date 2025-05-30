@@ -3,7 +3,11 @@ const paramTypes = require('./paramTypes');
 
 function bindParams(request, paramValues) {
   
-  console.log('Inside bindParams. Type of request:', typeof request);
+
+    console.dir(request, { depth: 1 });
+  throw new Error('Debugging request object');
+  
+ /* console.log('Inside bindParams. Type of request:', typeof request);
   console.log('Does request.input exist?', typeof request.input);
 
   for (const [key, value] of Object.entries(paramValues)) {
@@ -15,6 +19,8 @@ function bindParams(request, paramValues) {
     }
   }
   return request;
+  */
+ 
 }
 
 module.exports = bindParams;
