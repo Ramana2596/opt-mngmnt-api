@@ -7,8 +7,8 @@ sql.connect(dbConfig).then(() => {
     router.get('/getAvailableUsers', async (req, res) => {
         try {
             const result = await sql.query(`
-            EXEC [dbo].{UI_User_Role_Query]
-            @Game_Id = '${req.query.gameId}'
+            EXEC [dbo].[UI_User_Role_Query]
+                @Game_Id = '${req.query.gameId}'
             `);
             res.json(result.recordset);
         } catch (err) {
