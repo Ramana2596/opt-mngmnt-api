@@ -10,10 +10,10 @@ sql.connect(dbConfig).then(() => {
             const framedQuery = `
                     EXEC [dbo].[UI_User_Profile_Trans] 
                         @User_Name = '${req?.body?.name}',
-                       @User_Email  = '${req?.body?.email}',
-                       @PF_Id   = ${req?.body?.pfId},
-                       @Learn_Mode = '${req?.body?.learnMode}',
-                       @CMD_Line = '${req?.body?.cmdLine}'
+                        @User_Email  = '${req?.body?.email}',
+                        @Learn_Mode = '${req?.body?.learnMode}',
+                        @PF_Id   = ${req?.body?.pfId},
+                        @CMD_Line = '${req?.body?.cmdLine}'
                 `;
             const results = await sql.query(framedQuery);
             res.json(results.recordset);
