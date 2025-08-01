@@ -8,7 +8,7 @@ sql.connect(dbConfig).then(() => {
     router.get('/getMarketInfo', async (req, res) => {
         try {
             const result = await sql.query(`
-   EXEC [dbo].[UI_Part_Mst_Info]
+   EXEC [dbo].[UI_Market_Info]
         @Game_Id = '${req.query.gameId}',
         @Game_Batch = ${req.query.gameBatch},
         @Game_Team = '${req.query.gameTeam}'`);
