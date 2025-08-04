@@ -1,14 +1,13 @@
-// Get Market Info of a Teaam as perr its progress
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getTeamMarketInfo', async (req, res) => {
+    router.get('/getAssetCatalogTeam', async (req, res) => {
         try {
             const result = await sql.query(`
-   EXEC [dbo].[UI_Part_Mst_Info]
+   EXEC [dbo].[UI_Asset_Catalog_Team]
         @Game_Id = '${req.query.gameId}',
         @Game_Batch = ${req.query.gameBatch},
         @Game_Team = '${req.query.gameTeam}'`);
