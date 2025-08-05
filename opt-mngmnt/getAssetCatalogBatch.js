@@ -8,10 +8,10 @@ sql.connect(dbConfig).then(() => {
         try {
             const result = await sql.query(`
                     EXEC [dbo].[UI_Asset_Catalog_Batch]
-                            @Game_Id = '${req.query.gameId}',
-                            @Game_Batch = ${req.query.gameBatch},
-                            @CMD_Line = '${req.query.cmdLine}'`);
-                res.json(result.recordset);
+                        @Game_Id = ${req?.query?.gameId ? `${req.query.gameId}` : 'NULL'},
+                        @Game_Batch = ${req?.query?.gameBatch ? req.query.gameBatch : 'NULL'},
+                        @CMD_Line = '${req.query.cmdLine}'`);
+            res.json(result.recordset);
         } catch (err) {
             console.error('Query failed:', err);
             res.status(500).send('Internal Server Error');
