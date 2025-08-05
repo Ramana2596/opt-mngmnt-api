@@ -1,6 +1,7 @@
-// datatype mapping for parameters listed in paramTypes.js
-const paramTypes = require('./paramTypes');
+// Map datatype & value for parameters of a Stored Procedure, from Master list in paramTypes.js
 
+const paramTypes = require('./paramTypes');
+//
 function bindParams(request, paramValues) {
   
  /* console.log('Inside bindParams. Type of request:', typeof request);
