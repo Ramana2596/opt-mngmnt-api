@@ -1,5 +1,5 @@
 /*
-// New solution template
+// New solution template using bindParams
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
