@@ -1,5 +1,5 @@
 /*
-// New solution template
+// New solution template using bindParams
 
 const express = require('express');
 const sql = require('mssql');
@@ -20,10 +20,10 @@ router.post('/getStdOperationInput', async (req, res) => {
       Game_Team: req.body.Game_Team
     };
 
-    // Use helper to bind with correct types
-    bindParams(request, params);
+     // Pass the correct sqlRequest, not Express req
+    bindParams(sqlRequest, params);
 
-    const result = await request.execute('UI_Std_Operation_Input');
+    const result = await sqlRequest.execute('UI_Std_Operation_Input');
     res.status(200).json(result.recordset);
   } catch (err) {
     console.error('SQL Error:', err);
