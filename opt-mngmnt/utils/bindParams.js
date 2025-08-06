@@ -4,8 +4,13 @@ const paramTypes = require('./paramTypes');
 //
 function bindParams(request, paramValues) {
   
- /* console.log('Inside bindParams. Type of request:', typeof request);
-  console.log('Does request.input exist?', typeof request.input); */
+ 
+  console.log('Inside bindParams.js');
+  console.log('typeof request:', typeof request); // Expect: 'object'
+  console.log('typeof request.input:', typeof request.input); // Expect: 'function'
+  console.trace(); // Logs stack trace to identify caller
+
+
 
   for (const [key, value] of Object.entries(paramValues)) {
     const type = paramTypes[key];
