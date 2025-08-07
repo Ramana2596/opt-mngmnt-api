@@ -3,10 +3,10 @@ const sql = require('mssql');
 const dbConfig = require('../dbConfig');
 const router = express.Router();
 
-//sql.connect(dbConfig).then(() => {
+sql.connect(dbConfig).then(() => {
     router.get('/AssetCatalog', async (req, res) => {
         try {
-            await sql.connect(dbConfig);
+    
             console.log('Connected to SQL Server');    
             const request = new sql.Request();
 
@@ -25,6 +25,6 @@ const router = express.Router();
             res.status(500).send('Internal Server Error');
         }
     });
-//});
+});
 
 module.exports = router;
