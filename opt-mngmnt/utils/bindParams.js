@@ -8,8 +8,8 @@ function bindParams(request, paramValues) {
   console.log('Inside bindParams.js');
   console.log('typeof request:', typeof request); // Expect: 'object'
   console.log('typeof request.input:', typeof request.input); // Expect: 'function'
-  console.trace(); // Logs stack trace to identify caller
-
+  //console.trace(); // Logs stack trace to identify caller
+  console.log('bindParams called from:', new Error().stack.split('\n')[2].trim());
 
 
   for (const [key, value] of Object.entries(paramValues)) {
@@ -25,3 +25,5 @@ function bindParams(request, paramValues) {
 }
 
 module.exports = bindParams;
+
+
