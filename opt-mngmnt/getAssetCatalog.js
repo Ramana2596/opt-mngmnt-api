@@ -7,11 +7,8 @@ sql.connect(dbConfig).then(() => {
     router.get('/AssetCatalog', async (req, res) => {
         try {
     
-            console.log('Connected to SQL Server');    
             const request = new sql.Request();
 
-            console.log('Type of sql.Request:', typeof sql.Request); // Should log: 'function'
-           
             // Use correct types based on SQL Server stored procedure
             request.input('Game_Id', sql.NVarChar, req.query.gameId);
             request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch));
