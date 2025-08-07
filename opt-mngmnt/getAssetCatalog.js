@@ -7,7 +7,7 @@ const router = express.Router();
     router.get('/AssetCatalog', async (req, res) => {
         try {
             await sql.connect(dbConfig);
-
+            console.log('Connected to SQL Server');    
             const request = new sql.Request();
 
             console.log('Type of sql.Request:', typeof sql.Request); // Should log: 'function'
