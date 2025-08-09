@@ -12,11 +12,11 @@ router.get('/getStdMarketInput', async (req, res) => {
     request.input('Game_Id', sql.NVarChar, req.query.gameId);
     request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch));
     request.input('Game_Team', sql.NVarChar, req.query.gameTeam);
-    request.output('Message', sql.NVarChar(200));  // output parameter for message
+    request.output('OutMessage', sql.NVarChar(200));  // output parameter for message
 
     const result = await request.execute('UI_Std_Market_Input');
 
-    const message = result.output.Message || "";
+    const message = result.output.OutMessage || "";
 
     // If data is returned (rows), send with message
     const data = result.recordsets[0] || [];
