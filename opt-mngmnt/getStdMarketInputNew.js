@@ -62,7 +62,6 @@ sql.connect(dbConfig).then(() => {
             // Use correct data types based on SQL Server stored procedure
             request.input('Game_Id', sql.NVarChar, req.query.gameId);
             request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch));
-            request.input('Game_Team', sql.NVarChar, req.query.gameTeam);
             request.input('CMD_Line', sql.NVarChar, req.query.cmdLine);
 
             const result = await request.execute('UI_Std_Market_Input_New');
