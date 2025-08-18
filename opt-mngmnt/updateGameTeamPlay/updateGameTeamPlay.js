@@ -8,12 +8,22 @@ sql.connect(dbConfig).then(() => {
         if (req?.body?.cmdLine) {
             if (req?.body?.cmdLine === 'Team Play') {
                 try {
+                    /*
                     const framedQuery = `
                         EXEC [dbo].[Team_0_Play]
                             @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
                             @Game_Batch = ${req?.body?.gameBatch ? `'${req.body.gameBatch}'` : 'NULL'},
                             @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'}
                         `;
+                    */
+                      const framedQuery = `    
+                        EXEC [dbo].[UI_Game_Team_Play]
+                            @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
+                            @Game_Batch = ${req?.body?.gameBatch ? `'${req.body.gameBatch}'` : 'NULL'},
+                            @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'}
+                            @CMD_Line = ${req?.body?.cmdline ? `'${req.body.cmdline}'` : 'NULL'}
+                        `;
+
                     const results = await sql.query(framedQuery);
                     res.json(results.recordset);
                 } catch (err) {
@@ -28,12 +38,21 @@ sql.connect(dbConfig).then(() => {
                 }
             } else if (req?.body?.cmdLine === 'Rollback Last Period') {
                 try {
+                    /*
                     const framedQuery = `
                         EXEC [dbo].[Team_Rollback_A_Period]
                             @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
                             @Game_Batch = ${req?.body?.gameBatch ? `'${req.body.gameBatch}'` : 'NULL'},
                             @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'}
                         `;
+                    */
+                      const framedQuery = `    
+                        EXEC [dbo].[UI_Game_Team_Play]
+                            @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
+                            @Game_Batch = ${req?.body?.gameBatch ? `'${req.body.gameBatch}'` : 'NULL'},
+                            @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'}
+                            @CMD_Line = ${req?.body?.cmdline ? `'${req.body.cmdline}'` : 'NULL'}
+                        `;                    
                     const results = await sql.query(framedQuery);
                     res.json(results.recordset);
                 } catch (err) {
