@@ -12,7 +12,7 @@ sql.connect(dbConfig).then(() => {
                             @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
                             @Game_Batch = ${req?.body?.gameBatch ? `'${req.body.gameBatch}'` : 'NULL'},
                             @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'},
-                            @CMD_Line = ${req?.body?.cmdline ? `'${req.body.cmdline}'` : 'NULL'}
+                            @CMD_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}
                         `;
                 console.log('Executing query:', framedQuery);
                 const results = await sql.query(framedQuery);
