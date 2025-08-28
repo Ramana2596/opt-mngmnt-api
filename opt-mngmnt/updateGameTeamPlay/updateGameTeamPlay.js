@@ -14,7 +14,7 @@ sql.connect(dbConfig).then(() => {
                             @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'},
                             @CMD_Line = ${req?.body?.cmdline ? `'${req.body.cmdline}'` : 'NULL'}
                         `;
-
+                console.log('Executing query:', framedQuery);
                 const results = await sql.query(framedQuery);
                 res.json(results.recordset);
             } catch (err) {
