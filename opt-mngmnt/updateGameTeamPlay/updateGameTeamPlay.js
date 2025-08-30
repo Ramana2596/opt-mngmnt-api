@@ -12,11 +12,13 @@ sql.connect(dbConfig).then(() => {
                             @Game_Id = ${req?.body?.gameId ? `'${req.body.gameId}'` : 'NULL'},
                             @Game_Batch = ${req?.body?.gameBatch ? `'${req.body.gameBatch}'` : 'NULL'},
                             @Game_Team = ${req?.body?.gameTeam ? `'${req.body.gameTeam}'` : 'NULL'},
+                            @Out_Message = ${req?.body?.outMessage ? `'${req.body.outMessage}'` : 'NULL'},
                             @CMD_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}
                         `;
                 console.log('Executing query:', framedQuery);
                 const results = await sql.query(framedQuery);
-                res.json(results.recordset);
+                const message = results.output.OutMessage || "";
+                res.json(message);
             } catch (err) {
                 console.error('Query failed:', err);
 
