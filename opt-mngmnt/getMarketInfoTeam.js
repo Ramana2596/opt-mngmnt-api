@@ -5,7 +5,7 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getMarketInfo', async (req, res) => {
+    router.get('/getMarketInfoTeam', async (req, res) => {
         try {
             const result = await sql.query(`
    EXEC [dbo].[UI_Market_Info_Team]
