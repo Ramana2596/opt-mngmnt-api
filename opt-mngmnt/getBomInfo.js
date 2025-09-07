@@ -1,3 +1,6 @@
+// Updated for correct data types format for parameters
+// to eliminate error in data conversion
+
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
@@ -6,20 +9,13 @@ const router = express.Router();
 sql.connect(dbConfig).then(() => {
     router.get('/getBomInfo', async (req, res) => {
         try {
-            /*
-            // Log the incoming parameters
-            console.log('Request for getProductMstInfo:', {
-                Game_Id: req.query.gameId,
-                Game_Batch: req.query.gameBatch,
-                Game_Team: req.query.gameTeam
-            });
-            */
+            
             const request = new sql.Request();
 
             // Use correct types based on SQL Server stored procedure
-            request.input('Game_Id', sql.NVarChar, req.query.gameId);
-            request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch));
-            request.input('Game_Team', sql.NVarChar, req.query.gameTeam);
+            request.input('Game_Id', sql.NVarChar, req.query.gameId  || null);
+            request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch)  || null);
+            request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
 
             const result = await request.execute('UI_BOM_Info');
 
