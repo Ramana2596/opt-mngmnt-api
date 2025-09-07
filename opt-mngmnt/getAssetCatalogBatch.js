@@ -33,7 +33,7 @@ sql.connect(dbConfig).then(() => {
             // Use correct types based on SQL Server stored procedure
             request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
             request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch) || null);
-            request.input('CMD_Line', sql.NVarChar, req.query.cmdLine|| null);
+            request.input('CMD_Line', sql.NVarChar, req.query.cmdLine || null);
 
             const result = await request.execute('UI_Asset_Catalog_Batch');
 
