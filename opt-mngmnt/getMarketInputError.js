@@ -1,3 +1,4 @@
+
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
@@ -6,17 +7,21 @@ const router = express.Router();
 sql.connect(dbConfig).then(() => {
     router.get('/getMarketInputError', async (req, res) => {
         try {
-            const result = await sql.query(`
-   EXEC [dbo].[UI_Market_Input_Error]
-        @Game_Id = '${req.query.gameId}',
-        @Game_Batch = ${req.query.gameBatch}
-        `);
+
+            const request = new sql.Request();
+
+            // Add Parameters, validating data types, as in Stored Procedure
+            request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
+            request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch || null));
+            // request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null); 
+
+            const result = await request.execute('UI_Market_Input_Error');
+
             res.json(result.recordset);
-        } catch (err) {
+        }   catch (err) {
             console.error('Query failed:', err);
             res.status(500).send('Internal Server Error');
-        }
-    });
+        }   });
 });
 
 module.exports = router;
