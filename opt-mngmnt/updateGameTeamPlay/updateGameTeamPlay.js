@@ -9,12 +9,13 @@ sql.connect(dbConfig).then(() => {
               try {
                 await sql.connect(dbConfig);
                 const request = new sql.Request();
-            
-                request.input('Game_Id', sql.NVarChar, req?.body?.gameId);
-                request.input('Game_Batch', sql.Int, parseInt(req?.body?.gameBatch));
-                request.input('Game_Team', sql.NVarChar, req?.body?.gameTeam);
+                
+                // Add Parameters, validating data types, as in Stored Procedure
+                request.input('Game_Id', sql.NVarChar, req?.body?.gameId || null);
+                request.input('Game_Batch', sql.Int, parseInt(req?.body?.gameBatch) || null);
+                request.input('Game_Team', sql.NVarChar, req?.body?.gameTeam || null);
                 request.output('Out_Message', sql.NVarChar);  // No value, Just define type for output parameter.
-                request.input('CMD_Line', sql.NVarChar, req?.body?.cmdLine);
+                request.input('CMD_Line', sql.NVarChar, req?.body?.cmdLine || null);
             
                 const result = await request.execute('UI_Game_Team_Play');
                 console.log('Stored procedure result:', result);
