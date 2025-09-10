@@ -19,7 +19,7 @@ sql.connect(dbConfig).then(() => {
         } catch (err) {
             console.error('Query failed:', err);
             res.status(500).send('Internal Server Error');
-        }\
+        }
     });
 });
 
