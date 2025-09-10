@@ -1,3 +1,5 @@
+// Updated: Parameterised query, validating data types
+
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
@@ -6,12 +8,15 @@ const router = express.Router();
 sql.connect(dbConfig).then(() => {
     router.get('/getRoleInfo', async (req, res) => {
         try {
-            const result = await sql.query(`
-   EXEC [dbo].[UI_Role_Info]
-        @Game_Id = '${req.query.gameId}'
-         `);
+            const request = new sql.Request();
+
+            // Add Parameters, validating Data types as in SP
+            request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
+
+            const result = await request.execute('UI_Role_Mst_Info');
+
             res.json(result.recordset);
-        } catch (err) {
+        } catch (err){
             console.error('Query failed:', err);
             res.status(500).send('Internal Server Error');
         }
