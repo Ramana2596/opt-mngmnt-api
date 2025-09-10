@@ -13,6 +13,7 @@ sql.connect(dbConfig).then(() => {
             // Add Parameters, validating Data types as in SP
             request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
             request.input('CMD_Line', sql.NVarChar, req.query.cmdLine || null);
+            
             const result = await request.execute('UI_User_Profile_Query');
 
             res.json(result.recordset);
