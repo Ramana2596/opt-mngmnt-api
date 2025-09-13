@@ -26,6 +26,7 @@ router.post('/addUserProfile', async (req, res) => {
         request.output('Out_Message', sql.NVarChar); // Matches working screen
 
         const result = await request.execute('UI_User_Profile_Trans');
+
         /*
         // Check if these codes are required
         if (result.returnValue === 0) { 
@@ -53,6 +54,8 @@ router.post('/addUserProfile', async (req, res) => {
                     });
             }
         */
+
+/*
         // User Message from Stored Procedure
         if (result.returnValue === 0) {
             return res.json({
@@ -75,5 +78,26 @@ router.post('/addUserProfile', async (req, res) => {
             });
         } 
 });
+*/
+              // Always return a uniform response
+        return res.json({
+            returnValue: result.returnValue,               // 0, 1, or -1
+            userID: result.output.User_Id || null,
+            message: result.output.Out_Message || 
+                     (result.returnValue === 0
+                        ? 'User added successfully'
+                        : 'Business Logic Error')
+        });
+
+    } catch (err) {
+        // System error -> returnValue = -1
+        return res.status(500).json({
+            returnValue: -1,
+            userID: null,
+            message: `Server error: ${err.message}`
+        });
+    }
+});
+
 
 module.exports = router;
