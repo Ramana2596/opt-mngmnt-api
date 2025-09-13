@@ -1,26 +1,33 @@
+// Import required modules
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
 const router = express.Router();
 
+// Define POST route for adding a user profile
 router.post('/addUserProfile', async (req, res) => {
     try {
         const pool = await sql.connect(dbConfig);
 
+        // Extract user data from request body
         const { name, email, learnMode, pfId, cmdLine } = req.body;
+
         const request = new sql.Request(pool);
 
-        // Define input and output parameters
+        // Pass input parameters to the stored procedure
         request.input('User_Name', sql.NVarChar(50), name);
         request.input('User_Email', sql.NVarChar(100), email);
         request.input('Learn_Mode', sql.NVarChar(20), learnMode);
         request.input('PF_Id', sql.Int, pfId);
         request.input('CMD_Line', sql.NVarChar(100), cmdLine);
+
+        // Declare output parameters        
         request.output('User_Id', sql.Int);
         request.output('Out_Message', sql.NVarChar); // Matches working screen
 
         const result = await request.execute('UI_User_Profile_Trans');
-
+        /*
+        // Check if these codes are required
         if (result.returnValue === 0) { 
             const getUserRequest = new sql.Request();
 
@@ -36,15 +43,16 @@ router.post('/addUserProfile', async (req, res) => {
 
             return res.json({ 
                 success: true, 
-                userID: getUserResult.output.User_Id 
+                userID: getUserResult.output.User_Id,
+                message: result.output.Out_Message || 'User added successfully'
                 }); 
             } else { 
                 return res.status(400).json({
                     success: false, 
-                    message: 'Failed to add user profile' 
+                    message: result.output.Out_Message || 'Failed to add user profile'
                     });
             }
-    
+        */
         // User Message from Stored Procedure
         if (result.returnValue === 0) {
             return res.json({
