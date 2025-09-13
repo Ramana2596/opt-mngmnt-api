@@ -4,12 +4,12 @@ const sql = require('mssql');
 const dbConfig = require('../dbConfig');
 const router = express.Router();
 
-// Define POST route for adding a user profile
+// Route: Add User Profile: This endpoint inserts a new user profile into the system
 router.post('/addUserProfile', async (req, res) => {
     try {
         const pool = await sql.connect(dbConfig);
-
-        // Extract user data from request body
+ 
+        // Extract user data /parameters from request body
         const { name, email, learnMode, pfId, cmdLine } = req.body;
 
         const request = new sql.Request(pool);
@@ -21,76 +21,24 @@ router.post('/addUserProfile', async (req, res) => {
         request.input('PF_Id', sql.Int, pfId);
         request.input('CMD_Line', sql.NVarChar(100), cmdLine);
 
-        // Declare output parameters        
+        // Declare output parameters, matching the stored procedure       
         request.output('User_Id', sql.Int);
-        request.output('Out_Message', sql.NVarChar); // Matches working screen
+        request.output('Out_Message', sql.NVarChar(200)); // Matches working screen
 
         const result = await request.execute('UI_User_Profile_Trans');
 
-        /*
-        // Check if these codes are required
-        if (result.returnValue === 0) { 
-            const getUserRequest = new sql.Request();
-
-            getUserRequest.input('User_Name', sql.NVarChar(50), null);
-            getUserRequest.input('User_Email', sql.NVarChar(100), email);
-            getUserRequest.input('Learn_Mode', sql.NVarChar(20), null);
-            getUserRequest.input('PF_Id', sql.Int, null);
-            getUserRequest.input('CMD_Line', sql.NVarChar(100), 'Get_User');
-            getUserRequest.output('User_Id', sql.Int);
-            getUserRequest.output('Out_Message', sql.NVarChar);
-
-            const getUserResult = await getUserRequest.execute('UI_User_Profile_Trans');
-
-            return res.json({ 
-                success: true, 
-                userID: getUserResult.output.User_Id,
-                message: result.output.Out_Message || 'User added successfully'
-                }); 
-            } else { 
-                return res.status(400).json({
-                    success: false, 
-                    message: result.output.Out_Message || 'Failed to add user profile'
-                    });
-            }
-        */
-
-/*
-        // User Message from Stored Procedure
-        if (result.returnValue === 0) {
-            return res.json({
-                success: true,
-                userID: result.output.User_Id,
-                message: result.output.Out_Message || 'User added successfully'
-            });
-        } else {
-            return res.status(400).json({
-                success: false,
-                message: result.output.Out_Message || 'Failed to add user profile'
-            });
-        }
-
-    // System Error
-    } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: `Server error: ${err.message}`
-            });
-        } 
-});
-*/
-              // Always return a uniform response
+        // Send consistent JSON response back to frontend
         return res.json({
             returnValue: result.returnValue,               // 0, 1, or -1
             userID: result.output.User_Id || null,
             message: result.output.Out_Message || 
                      (result.returnValue === 0
-                        ? 'User added successfully'
-                        : 'Business Logic Error')
+                        ? ' !'
+                        : 'Check Input!')
         });
 
     } catch (err) {
-        // System error -> returnValue = -1
+        // Handle SQL or server error
         return res.status(500).json({
             returnValue: -1,
             userID: null,
