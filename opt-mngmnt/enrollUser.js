@@ -14,7 +14,7 @@ router.post('/enrollUser', async (req, res) => {
         const request = new sql.Request(pool); // ✅ Use pool
 
         // ✅ Input parameters
-        request.input('Game_Id', sql.NVarChar(20), gameId || null);
+        request.input('Game_Id', sql.NVarChar(20), gameId);
         request.input('User_Id', sql.Int, userId);
         request.input('Learn_Mode', sql.NVarChar(20), learnMode);
         request.output('Out_Message', sql.NVarChar(200));
