@@ -30,7 +30,7 @@ router.post('/addUserProfile', async (req, res) => {
         // Send consistent JSON response back to frontend
         return res.json({
             returnValue: result.returnValue,               // 0, 1, or -1
-            userID: result.output.User_Id || null,
+            userId: result.output.User_Id || null,
             message: result.output.Out_Message || 
                      (result.returnValue === 0
                         ? ' !'
@@ -41,7 +41,7 @@ router.post('/addUserProfile', async (req, res) => {
         // Handle SQL or server error
         return res.status(500).json({
             returnValue: -1,
-            userID: null,
+            userId: null,
             message: `Server error: ${err.message}`
         });
     }
