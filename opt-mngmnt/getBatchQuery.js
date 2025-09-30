@@ -16,14 +16,14 @@ sql.connect(dbConfig).then(() => {
             request.input('CMD_Line', sql.NVarChar, req.query.cmdLine|| null);
 
             console.log(`UI_Batch_Query parameters:
-                Game_Id: ${gameId},
-                Game_Batch: ${gameBatch},
-                CMD_Line: ${cmdLine}`);
+                Game_Id: ${req.query.gameId},
+                Game_Batch: ${req.query.gameBatch},
+                CMD_Line: ${req.query.cmdLine}`);
 
             const result = await request.execute('UI_Batch_Query');
 
             console.log('Query result:', result.recordset); // Logs the returned rows
-            
+
             res.json(result.recordset);
         } catch (err) {
             console.error('Query failed:', err);
