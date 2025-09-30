@@ -1,3 +1,4 @@
+/*
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
@@ -28,6 +29,44 @@ sql.connect(dbConfig).then(() => {
         } catch (err) {
             console.error('Query failed:', err);
             res.status(500).send('Internal Server Error');
+        }
+    });
+});
+*/
+
+const express = require('express');
+const sql = require('mssql');
+const dbConfig = require('../dbConfig');
+const router = express.Router();
+
+sql.connect(dbConfig).then(() => {
+    router.get('/getBatchQuery', async (req, res) => {
+        try {
+            const gameId = req.query.gameId || null;
+            const gameBatch = req.query.gameBatch ? parseInt(req.query.gameBatch) : null;
+            const cmdLine = req.query.cmdLine || null;
+
+            // Construct SQL string safely (parameterized)
+            const query = `
+                EXEC UI_Batch_Query 
+                    @Game_Id = ${gameId ? `'${gameId}'` : 'NULL'}, 
+                    @Game_Batch = ${gameBatch !== null ? gameBatch : 'NULL'}, 
+                    @CMD_Line = ${cmdLine ? `'${cmdLine}'` : 'NULL'}
+            `;
+
+            // Log query string
+            console.log("Running query:\n", query);
+
+            // Execute query
+            const result = await sql.query(query);
+
+            // Log response
+            console.log("Query result:", result.recordset);
+
+            res.json(result.recordset);
+        } catch (err) {
+            console.error("Query failed:", err);
+            res.status(500).send("Internal Server Error");
         }
     });
 });
