@@ -1,8 +1,9 @@
 // updateBatchMst.js
 // Purpose: API call to update batch master details via [dbo].[UI_Batch_Mst_Trans] stored procedure
-
-const sql = require("mssql");
-const dbConfig = require("../../config/dbConfig"); // Adjust path as needed
+const express = require('express');
+const sql = require('mssql');
+const dbConfig = require('../dbConfig');
+const router = express.Router();
 
 /**
  * Updates batch master details using the UI_Batch_Mst_Trans stored procedure.
