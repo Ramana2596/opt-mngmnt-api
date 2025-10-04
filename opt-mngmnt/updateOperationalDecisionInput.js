@@ -30,7 +30,7 @@ EXEC [dbo].[UI_Ops_Business_Plan_Trans]
     @Currency = ${operationalDecisionInfoObj?.currency ? `'${operationalDecisionInfoObj.currency}'` : 'NULL'},
     @Unit_Price = ${operationalDecisionInfoObj?.unitPrice ?? 'NULL'},
     @Created_on = ${getFormattedDate(operationalDecisionInfoObj)},
-    @CMB_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}
+    @CMD_Line = ${req?.body?.cmdLine ? `'${req.body.cmdLine}'` : 'NULL'}
 `;
 
                     return sql.query(framedQuery);
