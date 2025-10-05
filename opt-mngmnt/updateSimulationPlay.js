@@ -45,7 +45,7 @@ sql.connect(dbConfig).then(() => {
 
         // --- Standard JSON Response ---
         res.json({
-          success: true,
+          success: returnValue === 0, // true if SP success
           returnValue,
           message,
         });
