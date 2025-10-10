@@ -1,21 +1,24 @@
 // updateBatchMst.js
-// Purpose: API call to update batch master details via [dbo].[UI_Batch_Mst_Trans] stored procedure
+// Purpose: Top-level API route to update batch master details via UI_Batch_Mst_Trans SP
+
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 /**
- * Updates batch master details using the UI_Batch_Mst_Trans stored procedure.
- * @param {Object} batchData - Contains all required fields for the SP.
- * @returns {Promise<{ success: boolean, message: string }>}
+ * POST /api/updateBatchMst
+ * Body: JSON object containing batch details
  */
-async function updateBatchMst(batchData) {
+router.post('/', async (req, res) => {
   try {
+    // Connect to SQL Server
     const pool = await sql.connect(dbConfig);
     const request = pool.request();
 
-    // Input parameters
+    const batchData = req.body;
+
+    // Input parameters (match SP signature)
     request.input("Game_Id", sql.NVarChar(20), batchData.gameId);
     request.input("Game_Batch", sql.Int, batchData.gameBatch);
     request.input("Centre_Id", sql.Int, batchData.centreId);
@@ -27,6 +30,7 @@ async function updateBatchMst(batchData) {
     request.input("UOM", sql.NVarChar(10), batchData.uom);
     request.input("Close_Date", sql.Date, batchData.closeDate);
     request.input("Batch_Status", sql.NVarChar(20), batchData.batchStatus);
+    request.input("CMD_Line", sql.NVarChar(20), batchData.CMD_Line || "Update");
 
     // Output parameter
     request.output("Out_Message", sql.NVarChar(200));
@@ -34,16 +38,22 @@ async function updateBatchMst(batchData) {
     // Execute stored procedure
     const result = await request.execute("UI_Batch_Mst_Trans");
 
-    return {
-      success: result.returnValue === 0,
-      message: result.output.Out_Message || "No message returned",
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: `Error executing updateBatchMst: ${error.message}`,
-    };
+    // Send response to frontend
+    if (result.returnValue === 0) {
+      res.json({
+        success: true,
+        message: result.output.Out_Message || "Batch updated successfully."
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.output.Out_Message || "Batch update failed."
+      });
+    }
+  } catch (err) {
+    console.error('updateBatchMst route error:', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
-}
+});
 
-module.exports = { updateBatchMst };
+module.exports = router;
