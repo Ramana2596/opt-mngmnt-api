@@ -31,7 +31,7 @@ router.post('/updateBatchMst', async (req, res) => {
     request.input("UOM", sql.NVarChar(10), batchData.uom);
     request.input("Close_Date", sql.Date, batchData.closeDate);
     request.input("Batch_Status", sql.NVarChar(20), batchData.batchStatus);
-    request.input("CMD_Line", sql.NVarChar(20), batchData.CMD_Line || "Update");
+    //request.input("CMD_Line", sql.NVarChar(20), batchData.CMD_Line || "Update");
 
     // Output parameter
     request.output("Out_Message", sql.NVarChar(200));
