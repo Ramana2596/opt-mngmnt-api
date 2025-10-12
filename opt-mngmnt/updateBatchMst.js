@@ -10,7 +10,8 @@ const router = express.Router();
  * POST /api/updateBatchMst
  * Body: JSON object containing batch details
  */
-router.post('/', async (req, res) => {
+router.post('/updateBatchMst', async (req, res) => {
+
   try {
     // Connect to SQL Server
     const pool = await sql.connect(dbConfig);
