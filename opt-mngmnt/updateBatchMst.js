@@ -6,13 +6,11 @@ const sql = require('mssql');
 const dbConfig = require('../dbConfig');
 const router = express.Router();
 
-/**
- * POST /api/updateBatchMst
- * Body: JSON object containing batch details
- */
+// POST /api/updateBatchMst: Body: JSON object containing batch details
 router.post('/updateBatchMst', async (req, res) => {
 
   try {
+    console.log('bathData received:', req.body);
     // Connect to SQL Server
     const pool = await sql.connect(dbConfig);
     const request = pool.request();
