@@ -34,6 +34,23 @@ router.post('/updateBatchMst', async (req, res) => {
     // Output parameter
     request.output("Out_Message", sql.NVarChar(200));
 
+    // --- Log SQL Parameters ---
+        const sqlLog = (`
+    EXEC UI_Batch_Mst_Trans
+        @Game_Id = N'${batchData.gameId}',
+        @Game_Batch = ${batchData.gameBatch},
+        @Centre_Id = ${batchData.centreId},
+        @Faculty = N'${batchData.faculty}',
+        @Facilitator = N'${batchData.facilitator}',
+        @Venue = N'${batchData.venue}',
+        @Start_Date = '${batchData.startDate}',
+        @Duration = ${batchData.duration},
+        @UOM = N'${batchData.uom}',
+        @Close_Date = '${batchData.closeDate}',
+        @Batch_Status = N'${batchData.batchStatus}',
+        @Out_Message = OUTPUT;
+    `);
+        console.log('📝 Executing SQL:\n', sqlLog);
     // Execute stored procedure
     const result = await request.execute("UI_Batch_Mst_Trans");
 
