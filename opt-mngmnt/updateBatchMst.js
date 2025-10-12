@@ -16,7 +16,7 @@ router.post('/updateBatchMst', async (req, res) => {
     const request = pool.request();
 
     const batchData = req.body;
-
+/*
     // Input parameters (match SP signature)
     request.input("Game_Id", sql.NVarChar(20), batchData.gameId);
     request.input("Game_Batch", sql.Int, batchData.gameBatch);
@@ -30,7 +30,19 @@ router.post('/updateBatchMst', async (req, res) => {
     request.input("Close_Date", sql.Date, batchData.closeDate);
     request.input("Batch_Status", sql.NVarChar(20), batchData.batchStatus);
     //request.input("CMD_Line", sql.NVarChar(20), batchData.CMD_Line || "Update");
-
+*/
+//  Input parameters (match SP signature and payload keys)
+    request.input("Game_Id", sql.NVarChar(20), batchData.Game_Id);
+    request.input("Game_Batch", sql.Int, batchData.Game_Batch);
+    request.input("Centre_Id", sql.Int, batchData.Centre_Id);
+    request.input("Faculty", sql.NVarChar(50), String(batchData.Faculty || ''));
+    request.input("Facilitator", sql.NVarChar(50), String(batchData.Facilitator || ''));
+    request.input("Venue", sql.NVarChar(100), batchData.Venue);
+    request.input("Start_Date", sql.Date, batchData.Start_Date);
+    request.input("Duration", sql.SmallInt, batchData.Duration);
+    request.input("UOM", sql.NVarChar(10), batchData.UOM || '');
+    request.input("Close_Date", sql.Date, batchData.Close_Date);
+    request.input("Batch_Status", sql.NVarChar(20), batchData.Batch_Status);
     // Output parameter
     request.output("Out_Message", sql.NVarChar(200));
 
