@@ -8,7 +8,11 @@ sql.connect(dbConfig).then(() => {
     router.get('/getOperationalPlanInfoInput', async (req, res) => {
         try {
             //Convert recieved date into SQL readable format
-            const date = req?.query?.productionMonth ? `'${moment(req?.query?.productionMonth, 'YYYY-MM-DD').format('YYYY-MM-DD')}'` : null;
+ //           const date = req?.query?.productionMonth ? `'${moment(req?.query?.productionMonth, 'YYYY-MM-DD').format('YYYY-MM-DD')}'` : null;
+            const date = req?.query?.productionMonth
+            ? `'${moment(req?.query?.productionMonth, ['YYYY-MM-DD', 'MMM-YYYY']).startOf('month').format('YYYY-MM-DD')}'`
+            : null;
+
             //Frame SQL query to get executed
             const query = `EXEC [dbo].[UI_Ops_Business_Plan_Query]
                                     @Game_id = ${req?.query?.gameId ? `'${req?.query?.gameId}'` : null},
