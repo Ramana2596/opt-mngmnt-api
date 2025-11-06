@@ -5,8 +5,12 @@ const moment = require('moment');
 const router = express.Router();
 
 function getFormattedDate(marketFactorInfoObj) {
-    const date = marketFactorInfoObj?.productionMonth !== 'null' ? `'${moment(marketFactorInfoObj?.productionMonth, 'YYYY-MM-DD').format('YYYY-MM-DD')}'` : null;
-    return date;
+//    const date = marketFactorInfoObj?.productionMonth !== 'null' 
+// ? `'${moment(marketFactorInfoObj?.productionMonth, 'YYYY-MM-DD').format('YYYY-MM-DD')}'` : null;
+    const date = marketFactorInfoObj?.productionMonth !== 'null'
+    ? `'${moment(marketFactorInfoObj?.productionMonth, ['YYYY-MM-DD', 'MMM-YYYY']).startOf('month').format('YYYY-MM-DD')}'`
+    : 'NULL';
+return date;
 }
 
 sql.connect(dbConfig).then(() => {
