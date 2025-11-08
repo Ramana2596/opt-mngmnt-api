@@ -1,3 +1,5 @@
+
+/*
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
@@ -57,5 +59,66 @@ EXEC [dbo].[UI_Ops_Business_Plan_Trans]
         }
     });
 });
+*/
+
+const express = require('express');
+const sql = require('mssql');
+const dbConfig = require('../dbConfig');
+const moment = require('moment');
+const router = express.Router();
+
+// Format date as 'YYYY-MM-DD' string
+function getFormattedDate(dateStr) {
+    return dateStr && dateStr !== 'null'
+        ? moment(dateStr, ['YYYY-MM-DD', 'MMM-YYYY']).format('YYYY-MM-DD')
+        : null;
+}
+
+// POST /api/updateOperationalDecisionInput: Body: JSON object containing batch details
+    router.post('/updateOperationalDecisionInput', async (req, res) => {
+    try {
+        const pool = await sql.connect(dbConfig);
+        const request = pool.request();
+        const OpsData = req.body;
+
+    // Input parameters (match SP signature and Form/payload keys)
+        request.input('Game_Id', sql.NVarChar, OpsData.gameId ?? null);
+        request.input('Game_Batch', sql.Int, OpsData.gameBatch ?? null);
+        request.input('Game_Team', sql.Int, OpsData.gameTeam ?? null);
+        request.input('Production_Month', sql.Date, getFormattedDate(OpsData.productionMonth));
+        request.input('Operations_Input_Id', sql.NVarChar, OpsData.operationsInputId ?? null);
+        request.input('Part_no', sql.NVarChar, OpsData.partNo ?? null);
+        request.input('Quantity_Id', sql.NVarChar, OpsData.quantityId ?? null);
+        request.input('Quantity', sql.Decimal(18, 2), OpsData.quantity ?? null);
+        request.input('Price_Id', sql.NVarChar, OpsData.priceId ?? null);
+        request.input('Currency', sql.NVarChar, OpsData.currency ?? null);
+        request.input('Unit_Price', sql.Decimal(18, 2), OpsData.unitPrice ?? null);
+        request.input('Created_on', sql.Date, new Date().toISOString().split('T')[0]);
+        request.input('CMD_Line', sql.NVarChar, OpsData.cmdLine ?? null);
+
+        // Output parameter
+        request.output("Out_Message", sql.NVarChar(200));
+
+    // Execute stored procedure
+       const result = await request.execute("UI_Ops_Business_Plan_Trans");
+
+        const status = result.returnValue;
+        const success = status === 0;
+
+    // Send simplified response to frontend
+        res.status(success ? 200 : 400).json({
+        success,
+        status, // 0 = success, 1 = business rule violation, -1 = DB error
+        message: result.output?.Out_Message ?? 'No message returned'
+        });
+
+    } catch (err) {
+        res.status(500).json({
+        success: false,
+        status: -1,
+        message: 'Unhandled exception'
+         });
+        }
+        });
 
 module.exports = router;
