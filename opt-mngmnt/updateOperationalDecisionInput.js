@@ -67,11 +67,11 @@ const dbConfig = require('../dbConfig');
 const moment = require('moment');
 const router = express.Router();
 
-/*Converts a date string ("Jun-2025", "2025-06-01") to JS Date or null.*/
+/*Converts a date string ("Jun-2025", "2025-06-01") to format 'YYYY-MM-DD' or null.*/
 function getFormattedDate(dateStr) {
   if (!dateStr || dateStr === 'null') return null;
-  const parsed = moment(dateStr, ['YYYY-MM-DD', 'MMM-YYYY'], true);
-  return parsed.isValid() ? parsed.startOf('month').toDate() : null;
+  const parsed = moment(dateStr, ['YYYY-MM-DD', 'MMM-YYYY']).startOf('month');
+  return parsed.isValid() ? parsed.format('YYYY-MM-DD') : null;
 }
 
 /**
