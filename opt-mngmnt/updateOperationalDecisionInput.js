@@ -89,10 +89,10 @@ function getFormattedDate(dateStr) {
         request.input('Operations_Input_Id', sql.NVarChar, OpsData.operationsInputId ?? null);
         request.input('Part_no', sql.NVarChar, OpsData.partNo ?? null);
         request.input('Quantity_Id', sql.NVarChar, OpsData.quantityId ?? null);
-        request.input('Quantity', sql.Decimal(18, 2), OpsData.quantity ?? null);
+        request.input('Quantity', sql.Decimal(10, 2), OpsData.quantity ?? null);
         request.input('Price_Id', sql.NVarChar, OpsData.priceId ?? null);
         request.input('Currency', sql.NVarChar, OpsData.currency ?? null);
-        request.input('Unit_Price', sql.Decimal(18, 2), OpsData.unitPrice ?? null);
+        request.input('Unit_Price', sql.Decimal(6, 2), OpsData.unitPrice ?? null);
         request.input('Created_on', sql.Date, new Date().toISOString().split('T')[0]);
         request.input('CMD_Line', sql.NVarChar, OpsData.cmdLine ?? null);
 
