@@ -84,6 +84,7 @@ function getFormattedDate(dateStr) {
 // POST /api/updateOperationalDecisionInput: Body: JSON object containing batch details
     router.post('/updateOperationalDecisionInput', async (req, res) => {
     try {
+        const OpsData = req.body;
         // Debug log: show all parameters before executing SP
 console.log('🚀 Executing Stored Procedure: UI_Ops_Business_Plan_Trans');
 console.log('Parameters:', {
@@ -104,12 +105,11 @@ console.log('Parameters:', {
 
         const pool = await sql.connect(dbConfig);
         const request = pool.request();
-        const OpsData = req.body;
 
     // Input parameters (match SP signature and Form/payload keys)
         request.input('Game_Id', sql.NVarChar, OpsData.gameId ?? null);
         request.input('Game_Batch', sql.Int, OpsData.gameBatch ?? null);
-        request.input('Game_Team', sql.Int, OpsData.gameTeam ?? null);
+        request.input('Game_Team', sql.NVarChar, OpsData.gameTeam ?? null);
         request.input('Production_Month', sql.Date, getFormattedDate(OpsData.productionMonth));
         request.input('Operations_Input_Id', sql.NVarChar, OpsData.operationsInputId ?? null);
         request.input('Part_no', sql.NVarChar, OpsData.partNo ?? null);
