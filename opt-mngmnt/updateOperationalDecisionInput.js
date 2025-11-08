@@ -67,12 +67,19 @@ const dbConfig = require('../dbConfig');
 const moment = require('moment');
 const router = express.Router();
 
+function getFormattedDate(dateStr) {
+  if (!dateStr || dateStr === 'null') return null;
+  const parsed = moment(dateStr, ['YYYY-MM-DD', 'MMM-YYYY'], true);
+  return parsed.isValid() ? parsed.toDate() : null;
+}
+/*
 // Format date as 'YYYY-MM-DD' string
 function getFormattedDate(dateStr) {
     return dateStr && dateStr !== 'null'
         ? moment(dateStr, ['YYYY-MM-DD', 'MMM-YYYY']).format('YYYY-MM-DD')
         : null;
 }
+*/
 
 // POST /api/updateOperationalDecisionInput: Body: JSON object containing batch details
     router.post('/updateOperationalDecisionInput', async (req, res) => {
@@ -89,11 +96,15 @@ function getFormattedDate(dateStr) {
         request.input('Operations_Input_Id', sql.NVarChar, OpsData.operationsInputId ?? null);
         request.input('Part_no', sql.NVarChar, OpsData.partNo ?? null);
         request.input('Quantity_Id', sql.NVarChar, OpsData.quantityId ?? null);
-        request.input('Quantity', sql.Decimal(10, 2), OpsData.quantity ?? null);
+    //    request.input('Quantity', sql.Decimal(10, 2), OpsData.quantity ?? null);
+        request.input('Quantity', sql.Decimal(10, 2), 
+            isFinite(Number(OpsData.quantity)) ? Number(OpsData.quantity) : null);
         request.input('Price_Id', sql.NVarChar, OpsData.priceId ?? null);
         request.input('Currency', sql.NVarChar, OpsData.currency ?? null);
-        request.input('Unit_Price', sql.Decimal(6, 2), OpsData.unitPrice ?? null);
-        request.input('Created_on', sql.Date, new Date().toISOString().split('T')[0]);
+    //   request.input('Unit_Price', sql.Decimal(6, 2), OpsData.unitPrice ?? null);
+        request.input('Unit_Price', sql.Decimal(6, 2), 
+            isFinite(Number(OpsData.unitPrice)) ? Number(OpsData.unitPrice) : null);
+        request.input('Created_on', sql.Date, new Date());
         request.input('CMD_Line', sql.NVarChar, OpsData.cmdLine ?? null);
 
         // Output parameter
@@ -116,7 +127,7 @@ function getFormattedDate(dateStr) {
         res.status(500).json({
         success: false,
         status: -1,
-        message: 'Unhandled exception'
+        message: err.message ||'Unhandled exception'
          });
         }
         });
