@@ -148,7 +148,7 @@ router.post('/updateOperationalDecisionInput', async (req, res) => {
       const result = await request.execute('UI_Ops_Business_Plan_Trans');
 
       const status = result.returnValue;
-      const success = status === 0;
+      const success = returnValue === 0;
       const message = result.output?.Out_Message ?? 'No message returned';
 
       console.log('📄 SP Output:', message);
@@ -158,21 +158,29 @@ router.post('/updateOperationalDecisionInput', async (req, res) => {
         gameId: OpsData.gameId,
         partNo: OpsData.partNo,
         success,
-        status,
+        returnValue,
         message
       });
     }
 
     // Return summary response
+    const overallSuccess = results.every(r => r.success);
+    const overallMessage = overallSuccess
+      ? "All operations completed successfully"
+      : results.find(r => !r.success)?.message || "One or more operations failed";
+
     res.status(200).json({
-      success: results.every(r => r.success),
+      success: overallSuccess,
+      returnValue: overallSuccess ? 0 : 1,
+      message: overallMessage,
       results
     });
+
   } catch (err) {
     console.error('❌ Error executing updateOperationalDecisionInput:', err);
     res.status(500).json({
       success: false,
-      status: -1,
+      returnValue: -1,
       message: err.message || 'Unhandled exception'
     });
   }
