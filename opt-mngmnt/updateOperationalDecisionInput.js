@@ -147,7 +147,7 @@ router.post('/updateOperationalDecisionInput', async (req, res) => {
       // Execute stored procedure
       const result = await request.execute('UI_Ops_Business_Plan_Trans');
 
-      const status = result.returnValue;
+      const returnValue = result.returnValue;
       const success = returnValue === 0;
       const message = result.output?.Out_Message ?? 'No message returned';
 
@@ -164,10 +164,11 @@ router.post('/updateOperationalDecisionInput', async (req, res) => {
     }
 
     // Return summary response
-    const overallSuccess = results.every(r => r.success);
-    const overallMessage = overallSuccess
-      ? "All operations completed successfully"
-      : results.find(r => !r.success)?.message || "One or more operations failed";
+    const overallSuccess = results.every(r => r.returnValue === 0);
+    const overallMessage =
+      overallSuccess
+        ? 'All operations completed successfully'
+        : results.find(r => r.returnValue !== 0)?.message || 'One or more operations failed';
 
     res.status(200).json({
       success: overallSuccess,
