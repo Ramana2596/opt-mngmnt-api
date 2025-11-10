@@ -83,8 +83,7 @@ router.post('/updateOperationalDecisionInput', async (req, res) => {
   try {
     console.log('🟢 Incoming Payload:', JSON.stringify(req.body, null, 2));
 
-  //  const { cmdLine, operationalPlanInfoArray } = req.body;
-    const { cmdLine, opsPlanInfoArray } = req.body;
+    const { cmdLine, operationalPlanInfoArray } = req.body;
 
     if (!cmdLine) {
       return res.status(400).json({
@@ -94,16 +93,11 @@ router.post('/updateOperationalDecisionInput', async (req, res) => {
     }
 
     // Ensure input is always an array
-  /*  const opsArray =
+    const opsArray =
       Array.isArray(operationalPlanInfoArray) && operationalPlanInfoArray.length > 0
         ? operationalPlanInfoArray
         : [req.body];
- */
-    const opsArray =
-      Array.isArray(opsPlanInfoArray) && opsPlanInfoArray.length > 0
-        ? opsPlanInfoArray
-        : [req.body];
-
+  
     // Connect to SQL Server
     const pool = await sql.connect(dbConfig);
     const results = [];
