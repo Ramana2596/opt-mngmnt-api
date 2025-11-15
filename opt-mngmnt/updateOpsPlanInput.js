@@ -16,7 +16,7 @@ function getFormattedDate(dateStr) {
  * Handles Add / Update / Delete for operation plan data
  * Supports both single object and array payloads
  */
-router.post('/updatepsPlanInput', async (req, res) => {
+router.post('/updateOpsPlanInput', async (req, res) => {
   try {
     console.log('🟢 Incoming Payload:', JSON.stringify(req.body, null, 2));
 
