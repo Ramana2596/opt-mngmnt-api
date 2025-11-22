@@ -1,11 +1,9 @@
-
-
 // Updated for correct data types format for parameters
 // to eliminate error in data conversion
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
+const dbConfig = require('../../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
