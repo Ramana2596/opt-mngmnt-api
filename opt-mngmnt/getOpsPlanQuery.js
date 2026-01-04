@@ -9,7 +9,7 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-  router.get('/getOpsPlanInfo', async (req, res) => {
+  router.get('/getOpsPlanQuery', async (req, res) => {
     try {
         const request = new sql.Request();
 
