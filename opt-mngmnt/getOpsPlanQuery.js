@@ -1,0 +1,42 @@
+//
+
+// Updated for correct data types format for parameters
+// to eliminate error in data conversion
+
+const express = require('express');
+const sql = require('mssql');
+const dbConfig = require('../dbConfig');
+const router = express.Router();
+
+sql.connect(dbConfig).then(() => {
+  router.get('/getOpsPlanInfo', async (req, res) => {
+    try {
+        const request = new sql.Request();
+
+        // Add parameters
+        request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
+        request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch) || null);
+        request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
+        request.input('Production_Month', sql.Date, req.query.productionMonth ? new Date(req.query.productionMonth) : null);
+        request.input('Part_no', sql.NVarChar, req.query.partNo || null);
+        request.input('Operations_Input_Id', sql.NVarChar, req.query.operationsInputId || null);
+        request.input('Part_Category', sql.NVarChar, req.query.partCategory || null);
+        request.input('Ref_Type_Info', sql.NVarChar, req.query.refTypeInfo || null);
+        request.input('Ref_Type_Price', sql.NVarChar, req.query.refTypePrice || null);
+        request.input('Market_Input_Id', sql.NVarChar, req.query.marketInputId || null);
+        request.input('Quantity_Id', sql.NVarChar, req.query.quantityId || null);
+        request.input('Price_Id', sql.NVarChar, req.query.priceId || null);
+        request.input('CMD_Line', sql.NVarChar, req.query.cmdLine|| null);
+        
+        // OUT parameters can be added if needed
+        //request.output('OutMessage', sql.NVarChar, req.query.outMessage);  // output parameter for message  
+        const result = await request.execute('UI_Ops_Business_Plan_Query');
+
+        res.json(result.recordset);
+    }   catch (err) {
+      console.error('Query failed:', err);
+      res.status(500).send('Internal Server Error');
+    } });
+});
+
+module.exports = router;
