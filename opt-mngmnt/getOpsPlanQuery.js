@@ -1,7 +1,4 @@
-// File: backend/routes/getOpsPlanQuery.js
-
-// Updated for correct data types format for parameters
-// to eliminate error in data conversion
+// getOpsPlanQuery.js
 
 const express = require("express");
 const sql = require("mssql");
@@ -17,7 +14,7 @@ sql.connect(dbConfig).then(() => {
       request.input("Game_Id", sql.NVarChar, req.query.gameId || null);
       request.input("Game_Batch", sql.Int, parseInt(req.query.gameBatch) || null);
       request.input("Game_Team", sql.NVarChar, req.query.gameTeam || null);
-      request.input("Production_Month", sql.Date, req.query.productionMonth ? new Date(req.query.productionMonth) : null);
+      request.input("Production_Month", sql.Date, req.query.productionMonth || null);
       request.input("Operations_Input_Id", sql.NVarChar, req.query.operationsInputId || null);
       request.input("Ref_Type_Info", sql.NVarChar, req.query.refTypeInfo || null);
       request.input("Ref_Type_Price", sql.NVarChar, req.query.refTypePrice || null);
@@ -27,13 +24,8 @@ sql.connect(dbConfig).then(() => {
 
       const result = await request.execute("UI_Ops_Business_Plan_Query");
 
-      // Shape response for frontend hook
-      res.json({
-        productionMonth: result.recordset?.[0]?.Period || null,
-        Table_Data: result.recordset || [],
-        Quantity_Info: result.recordset?.Quantity_Info || [],
-        Info_Price: result.recordset?.Info_Price || [],
-      });
+      // Return raw recordset
+      res.json(result.recordset || []);
     } catch (err) {
       console.error("Query failed:", err);
       res.status(500).send("Internal Server Error");
