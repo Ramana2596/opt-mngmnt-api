@@ -1,6 +1,5 @@
-// getTeamProgressStatus.js/**
- * API Name   : getTeamProgressStatus.js
- * Purpose    : Executes [UI_Get_Team_Progress_Status] stored procedure
+// getTeamProgressStatus.js
+
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
