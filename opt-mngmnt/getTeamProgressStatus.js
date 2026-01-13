@@ -11,12 +11,21 @@ sql.connect(dbConfig).then(() => {
 
   router.post('/getTeamProgressStatus', async (req, res) => {
     try {
+      const { gameId, gameBatch, gameTeam } = req.body;
+
+      if (!gameId || !gameBatch || !gameTeam) {
+        return res.status(400).json({
+          success: false,
+          code: -1,
+          message: "Missing required parameters: gameId, gameBatch, or gameTeam",
+        });
+      }
       const request = new sql.Request();
 
       // SP input parameters
-      request.input('Game_id', sql.NVarChar(20), req?.body?.gameId || null);
-      request.input('Game_Batch', sql.Int, Number(req?.body?.gameBatch) || null);
-      request.input('Game_Team', sql.NVarChar(10), req?.body?.gameTeam || null);
+      request.input('Game_Id', sql.NVarChar(20), req?.body?.gameId);
+      request.input('Game_Batch', sql.Int, Number(req?.body?.gameBatch));
+      request.input('Game_Team', sql.NVarChar(10), req?.body?.gameTeam);
 
       // SP output parameter
       request.output('Out_Message', sql.NVarChar(200));
