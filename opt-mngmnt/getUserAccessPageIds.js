@@ -33,9 +33,9 @@ const router = express.Router();
 router.get('/getUserAccessPageIds', async (req, res) => {
   try {
     // 1. Validate input query
-    const { gameId, userId } = req.query;
-    if (!gameId || !userId) {
-      return res.status(400).json({ message: 'gameId and userId required' });
+    const { gameId, rlId } = req.query;
+    if (!gameId || !rlId) {
+      return res.status(400).json({ message: 'gameId and rlId required' });
     }
 
     // 2. Connect to SQL Server (uses internal pool)
@@ -46,7 +46,7 @@ router.get('/getUserAccessPageIds', async (req, res) => {
 
     // 4. Input parameters
     request.input('Game_Id', sql.NVarChar(20), gameId);
-    request.input('User_Id', sql.Int, parseInt(userId));
+    request.input('RL_Id', sql.Int, parseInt(rlId));
 
     // 5. Output parameter, if needed
     // request.output('Out_Message', sql.NVarChar(200));
