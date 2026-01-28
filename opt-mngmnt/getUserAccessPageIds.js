@@ -1,5 +1,6 @@
 // opt-mngmnt/getUserAccessPageIds.js
 //  Fetch UI page IDs based on user roles.
+/*
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
@@ -18,6 +19,55 @@ sql.connect(dbConfig).then(() => {
             res.status(500).send('Internal Server Error');
         }
     });
+});
+
+*/
+
+// Purpose: Get RBAC UI screens for logged-in user (Enterprise style, standard four-line header)
+
+const express = require('express');
+const sql = require('mssql');
+const dbConfig = require('../dbConfig');
+const router = express.Router();
+
+router.get('/getUserAccessPageIds', async (req, res) => {
+  try {
+    // 1. Validate input query
+    const { gameId, userId } = req.query;
+    if (!gameId || !userId) {
+      return res.status(400).json({ message: 'gameId and userId required' });
+    }
+
+    // 2. Connect to SQL Server (uses internal pool)
+    await sql.connect(dbConfig);
+
+    // 3. Create request
+    const request = new sql.Request();
+
+    // 4. Input parameters
+    request.input('Game_Id', sql.NVarChar(20), gameId);
+    request.input('User_Id', sql.Int, parseInt(userId));
+
+    // 5. Output parameter, if needed
+    // request.output('Out_Message', sql.NVarChar(200));
+
+    // 6. Execute stored procedure
+    const result = await request.execute('UI_RBAC_Screen_Info');
+
+    // 7. Map to old UI contract (uiId)
+    const formatted = (result.recordset || []).map(r => ({
+      uiId: r.Screen_Id,
+      name: r.Name,
+      title: r.Title
+    }));
+
+    // 8. Send response
+    res.json(formatted);
+
+  } catch (err) {
+    console.error('getUserAccessScreens Error:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
 });
 
 module.exports = router;
