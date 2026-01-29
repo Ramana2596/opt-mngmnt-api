@@ -54,16 +54,9 @@ router.get('/getUserAccessPageIds', async (req, res) => {
     // 6. Execute stored procedure
     const result = await request.execute('UI_RBAC_Screen_Info');
 
-    // 7. Map to old UI contract (uiId)
-    const formatted = (result.recordset || []).map(r => ({
-      uiId: r.Screen_Id,
-      name: r.Name,
-      title: r.Title
-    }));
-
-    // 8. Send response
-    res.json(formatted);
-
+    // 7. Return SP output as-is (no mapping)
+    res.json(result.recordset);
+    
   } catch (err) {
     console.error('getUserAccessScreens Error:', err);
     res.status(500).json({ message: 'Server Error' });
