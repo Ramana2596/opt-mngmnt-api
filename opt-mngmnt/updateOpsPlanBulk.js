@@ -38,7 +38,7 @@ sql.connect(dbConfig).then(() => {
       tvp.columns.add("Game_Team", sql.NVarChar(10));
       tvp.columns.add("Production_Month", sql.Date);
       tvp.columns.add("Operations_Input_Id", sql.NVarChar(10));
-      tvp.columns.add("Part_no", sql.NVarChar(10));
+      tvp.columns.add("Part_No", sql.NVarChar(10));
       tvp.columns.add("Quantity_Id", sql.NVarChar(5));
       tvp.columns.add("Quantity", sql.Decimal(10, 2));
       tvp.columns.add("Price_Id", sql.NVarChar(5));
@@ -46,13 +46,14 @@ sql.connect(dbConfig).then(() => {
 
       // ---- Populate TVP rows from frontend payload ----
       rows.forEach((r) => {
+          console.log(`Row ${idx}:`, r);  // log each row from frontend
         tvp.rows.add(
           r.Game_Id,
           r.Game_Batch,
           r.Game_Team,
           r.Production_Month,
           r.Operations_Input_Id,
-          r.Part_no,
+          r.Part_No,
           r.Quantity_Id,               // nvarchar
           parseFloat(r.Quantity) || 0, // numeric(10,2)
           r.Price_Id,                  // nvarchar
