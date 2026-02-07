@@ -45,8 +45,8 @@ sql.connect(dbConfig).then(() => {
       tvp.columns.add("Unit_Price", sql.Decimal(6, 2));
 
       // ---- Populate TVP rows from frontend payload ----
-      rows.forEach((r) => {
-          console.log(`Row ${idx}:`, r);  // log each row from frontend
+      rows.forEach((r, idx) => {
+        console.log(`Row ${idx}:`, r);
         tvp.rows.add(
           r.Game_Id,
           r.Game_Batch,
@@ -54,12 +54,13 @@ sql.connect(dbConfig).then(() => {
           r.Production_Month,
           r.Operations_Input_Id,
           r.Part_No,
-          r.Quantity_Id,               // nvarchar
-          parseFloat(r.Quantity) || 0, // numeric(10,2)
-          r.Price_Id,                  // nvarchar
-          parseFloat(r.Unit_Price) || 0 // numeric(6,2)
+          r.Quantity_Id,
+          parseFloat(r.Quantity) || 0,
+          r.Price_Id,
+          parseFloat(r.Unit_Price) || 0
         );
       });
+
 
       // ---- Define SP Input/Output Parameters ----
       request.input('OpsPlanRows', tvp); // TVP input
