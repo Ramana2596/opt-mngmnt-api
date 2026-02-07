@@ -2,7 +2,7 @@
 /**
  * API Name   : updateOpsPlanBulk.js
  * Purpose    : Bulk update Operations Plan using [UI_Ops_Business_Plan_Bulk] SP
- * Input      : rows (array of ops plan rows), userId
+ * Input      : rows (array of ops plan rows), userRole 
  * Output     : @Out_Message from SP, success/failure indicator
  */
 
@@ -18,7 +18,7 @@ sql.connect(dbConfig).then(() => {
   router.post('/updateOpsPlanBulk', async (req, res) => {
 
     // ---- Validate required fields ----
-    const { rows, userId } = req.body;
+    const { rows, userRole } = req.body;
     if (!rows || rows.length === 0) {
       return res.status(400).json({
         success: false,
@@ -64,7 +64,7 @@ sql.connect(dbConfig).then(() => {
 
       // ---- Define SP Input/Output Parameters ----
       request.input('OpsPlanRows', tvp); // TVP input
-      request.input('UserId', sql.NVarChar(50), userId || "Team_Leader");
+      request.input('UserRole', sql.NVarChar(50), userRole || "Team_Leader");
       request.output('Out_Message', sql.NVarChar(200));
 
       // ---- Execute Stored Procedure ----
