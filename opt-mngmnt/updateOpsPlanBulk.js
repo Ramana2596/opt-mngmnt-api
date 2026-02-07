@@ -42,7 +42,7 @@ sql.connect(dbConfig).then(() => {
       tvp.columns.add("Quantity_Id", sql.NVarChar(5));
       tvp.columns.add("Quantity", sql.Decimal(10, 2));
       tvp.columns.add("Price_Id", sql.NVarChar(5));
-      tvp.columns.add("Unit_Price", sql.Decimal(6, 2));
+      tvp.columns.add("Unit_Price", sql.Decimal(10, 2));
 
       // ---- Populate TVP rows from frontend payload ----
       rows.forEach((r, idx) => {
@@ -57,7 +57,7 @@ sql.connect(dbConfig).then(() => {
           r.Quantity_Id,
           parseFloat(r.Quantity) || 0,
           r.Price_Id,
-          parseFloat(r.Unit_Price) || 0
+          r.Unit_Price == null ? null : parseFloat(r.Unit_Price)
         );
       });
 
