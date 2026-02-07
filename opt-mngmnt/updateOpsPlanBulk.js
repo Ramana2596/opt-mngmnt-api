@@ -46,7 +46,7 @@ sql.connect(dbConfig).then(() => {
 
       // ---- Populate TVP rows from frontend payload ----
       rows.forEach((r, idx) => {
-        console.log(`Row ${idx}:`, r);
+//        console.log(`Row ${idx}:`, r);
         tvp.rows.add(
           r.Game_Id,
           r.Game_Batch,
