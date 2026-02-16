@@ -44,6 +44,9 @@ sql.connect(dbConfig).then(() => {
             request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
             request.input('CMD_Line', sql.NVarChar, req.query.cmdLine|| null);
 
+            // SP output parameter
+            request.output('Out_Message', sql.NVarChar(200));
+            
             const result = await request.execute('UI_Strategy_Plan_Query');
 
             res.json(result.recordset);
