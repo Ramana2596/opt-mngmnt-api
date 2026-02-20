@@ -11,7 +11,8 @@ sql.connect(dbConfig).then(() => {
 
   router.post('/getKeyResultBsInfo', async (req, res) => {
     try {
-      const { gameId, gameBatch, gameTeam } = req.body;
+      // Extract parameters from request body
+      const { gameId, gameBatch, gameTeam } = req.body.params || {};
 
       if (!gameId || !gameBatch || !gameTeam) {
         return res.status(400).json({
