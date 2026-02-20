@@ -34,7 +34,7 @@ sql.connect(dbConfig).then(() => {
       request.input('Game_Team', sql.NVarChar(10), gameTeam);
 
       // Execute SP and inspect recordset metadata
-      const result = await request.execute('UI_Key_Result_Pl_Info');
+      const result = await request.execute('UI_Key_Result_Bs_Info');
 
       // SQL execution informational code
       const code = result.returnValue ?? 0;
