@@ -11,7 +11,7 @@ sql.connect(dbConfig).then(() => {
 
   router.post('/getKeyResultPlInfo', async (req, res) => {
     try {
-      const { gameId, gameBatch, gameTeam } = req.body;
+      const { gameId, gameBatch, gameTeam } = req.body.params || {};
 
       if (!gameId || !gameBatch || !gameTeam) {
         return res.status(400).json({
