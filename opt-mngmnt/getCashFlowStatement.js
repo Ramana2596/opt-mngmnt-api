@@ -3,7 +3,7 @@
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../../dbConfig');
+const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
