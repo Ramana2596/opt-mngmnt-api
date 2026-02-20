@@ -12,6 +12,7 @@ sql.connect(dbConfig).then(() => {
   router.post('/getKeyResultPlInfo', async (req, res) => {
     try {
       const { gameId, gameBatch, gameTeam } = req.body.params || {};
+console.log('getKeyResultBsInfo called with:', req.body.params || req.body);
 
       if (!gameId || !gameBatch || !gameTeam) {
         return res.status(400).json({
@@ -32,7 +33,15 @@ sql.connect(dbConfig).then(() => {
 
       // Execute SP
       const result = await request.execute('UI_Key_Result_Pl_Info');
-
+      console.log('SP result:',
+        JSON.stringify({
+          returnValue: result.returnValue,
+          output: result.output,
+          recordsetsLength: result.recordsets?.length,
+          recordset0Length: result.recordset?.length,
+          sampleRecord0: result.recordset?.[0] ?? null
+        }, null, 2));
+        
       // Business return code (0 = normal, 1 = business-rule issue)
       const code = result.returnValue ?? 0;
 
