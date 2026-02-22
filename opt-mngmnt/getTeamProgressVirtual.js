@@ -1,4 +1,5 @@
 // getTeamProgressVirtual.js
+// Express route for handling team progress in virtual simulation
 
 const express = require('express');
 const sql = require('mssql');
@@ -6,63 +7,62 @@ const dbConfig = require('../dbConfig');
 
 const router = express.Router();
 
-// DB connection at app startup (not per request)
+// Establish DB connection at app startup (not per request)
 sql.connect(dbConfig).then(() => {
 
+  // API endpoint for fetching/updating team progress
   router.post('/getTeamProgressVirtual', async (req, res) => {
     try {
-      // Snake_Case Vs Frontend camelCase keys
+      // Destructure camelCase keys from frontend payload
       const {
-        Game_Id: gameId,
-        Game_Batch: gameBatch,
-        Game_Team: gameTeam,
-        Completed_Period: completedPeriod,
-        Completed_Stage_No: completedStageNo
-      } = req.body;
+        gameId,
+        gameBatch,
+        gameTeam,
+        completedPeriod,
+        completedStageNo
+      } = req.body; 
 
-      if (!gameId || !gameBatch || !gameTeam) {
+      // Validate required parameters
+      if (!gameId || !gameBatch || !gameTeam || !completedPeriod || !completedStageNo) {
         return res.status(400).json({
           success: false,
           code: -1,
           message: "Missing parameters",
         });
       }
+
       const request = new sql.Request();
 
-      // SP input parameters
-        request.input('Game_Id', sql.NVarChar(20), req?.body?.gameId);
-        request.input('Game_Batch', sql.Int, Number(req?.body?.gameBatch));
-        request.input('Game_Team', sql.NVarChar(10), req?.body?.gameTeam);
-        request.input('Completed_Period', sql.NVarChar(10), req?.body?.completedPeriod);
-        request.input('Completed_Stage_No', sql.NVarChar(10), req?.body?.completedStageNo);
+      // Bind stored procedure input parameters (PascalCase for DB)
+      request.input('Game_Id', sql.NVarChar(20), gameId);              
+      request.input('Game_Batch', sql.Int, Number(gameBatch));         
+      request.input('Game_Team', sql.NVarChar(10), gameTeam);          
+      request.input('Completed_Period', sql.NVarChar(10), completedPeriod);   
+      request.input('Completed_Stage_No', sql.NVarChar(10), completedStageNo); 
 
-      // SP output parameter
+      // Define output parameter for SP message
       request.output('Out_Message', sql.NVarChar(200));
 
-      // Execute SP
+      // Execute stored procedure
       const result = await request.execute('UI_Team_Progress_Virtual');
 
-      // Business return code (0 = normal, 1 = business-rule issue)
+      // Extract return code, message, and data
       const code = result.returnValue ?? 0;
-
-      // Message fully controlled by SP
       const message = result.output?.Out_Message || '';
-
-      // Data returned by SP (if any)
       const data = result.recordset?.[0] || null;
 
-      // Normal business response
+      // Send normal business response
       res.json({ success: code === 0, code, message, data });
 
     } catch (err) {
-      // DB / system error during SP execution (THROW 50001)
+      // Handle DB/system errors during SP execution
       console.error('SQL Error:', err);
       res.status(500).json({ success: false, code: -1, message: err.message });
     }
   });
 
 }).catch(err => {
-  // DB connection failure at application startup
+  // Handle DB connection failure at application startup
   console.error('DB Connection Failed:', err);
 });
 
