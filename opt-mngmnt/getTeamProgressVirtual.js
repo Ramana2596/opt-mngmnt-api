@@ -37,8 +37,8 @@ sql.connect(dbConfig).then(() => {
       request.input('Game_Id', sql.NVarChar(20), gameId);              
       request.input('Game_Batch', sql.Int, Number(gameBatch));         
       request.input('Game_Team', sql.NVarChar(10), gameTeam);          
-      request.input('Completed_Period', sql.NVarChar(10), completedPeriod);   
-      request.input('Completed_Stage_No', sql.NVarChar(10), completedStageNo); 
+      request.input('Completed_Period', sql.Date, completedPeriod);   
+      request.input('Completed_Stage_No', sql.Int, completedStageNo); 
 
       // Define output parameter for SP message
       request.output('Out_Message', sql.NVarChar(200));
