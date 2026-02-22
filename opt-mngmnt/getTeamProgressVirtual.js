@@ -11,13 +11,20 @@ sql.connect(dbConfig).then(() => {
 
   router.post('/getTeamProgressVirtual', async (req, res) => {
     try {
-      const { gameId, gameBatch, gameTeam } = req.body;
+      // Snake_Case Vs Frontend camelCase keys
+      const {
+        Game_Id: gameId,
+        Game_Batch: gameBatch,
+        Game_Team: gameTeam,
+        Completed_Period: completedPeriod,
+        Completed_Stage_No: completedStageNo
+      } = req.body;
 
       if (!gameId || !gameBatch || !gameTeam) {
         return res.status(400).json({
           success: false,
           code: -1,
-          message: "Missing required parameters: gameId, gameBatch, or gameTeam",
+          message: "Missing parameters",
         });
       }
       const request = new sql.Request();
@@ -41,7 +48,7 @@ sql.connect(dbConfig).then(() => {
       // Message fully controlled by SP
       const message = result.output?.Out_Message || '';
 
-      // Single-row status payload
+      // Data returned by SP (if any)
       const data = result.recordset?.[0] || null;
 
       // Normal business response
