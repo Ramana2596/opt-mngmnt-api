@@ -17,15 +17,16 @@ sql.connect(dbConfig).then(() => {
         return res.status(400).json({
           success: false,
           code: -1,
-          message: "Missing required parameters: gameId, gameBatch, or gameTeam",
+          message: "Missing Parameters",
         });
       }
       const request = new sql.Request();
 
       // SP input parameters
-      request.input('Game_Id', sql.NVarChar(20), req?.body?.gameId);
-      request.input('Game_Batch', sql.Int, Number(req?.body?.gameBatch));
-      request.input('Game_Team', sql.NVarChar(10), req?.body?.gameTeam);
+      request.input('Game_Id', sql.NVarChar(20), gameId);
+      request.input('Game_Batch', sql.Int, Number(gameBatch));
+      request.input('Game_Team', sql.NVarChar(10), gameTeam);
+
 
       // SP output parameter
       request.output('Out_Message', sql.NVarChar(200));
@@ -33,27 +34,23 @@ sql.connect(dbConfig).then(() => {
       // Execute SP
       const result = await request.execute('UI_Team_Progress_Status');
 
-      // Business return code (0 = normal, 1 = business-rule issue)
+      // Extract return code, message, and data
       const code = result.returnValue ?? 0;
-
-      // Message fully controlled by SP
       const message = result.output?.Out_Message || '';
-
-      // Single-row status payload
       const data = result.recordset?.[0] || null;
 
       // Normal business response
       res.json({ success: code === 0, code, message, data });
 
     } catch (err) {
-      // DB / system error during SP execution (THROW 50001)
+      // SQL Error SP execution (THROW 50001)
       console.error('SQL Error:', err);
       res.status(500).json({ success: false, code: -1, message: err.message });
     }
   });
 
 }).catch(err => {
-  // DB connection failure at application startup
+  // NW / DB onnection failure at application startup
   console.error('DB Connection Failed:', err);
 });
 
