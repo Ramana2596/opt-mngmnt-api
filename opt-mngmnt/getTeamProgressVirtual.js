@@ -22,8 +22,8 @@ sql.connect(dbConfig).then(() => {
         completedStageNo
       } = req.body; 
 
-      // Validate required parameters
-      if (!gameId || !gameBatch || !gameTeam || !completedPeriod || !completedStageNo) {
+      // Validate Mandatory parameters (NOT NULL)
+      if (!gameId || !gameBatch || !gameTeam) {
         return res.status(400).json({
           success: false,
           code: -1,
