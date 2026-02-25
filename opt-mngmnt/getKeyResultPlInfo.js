@@ -1,20 +1,11 @@
 // getKeyResultPlInfo.js
-// Purpose:  Fetch Key Result P&L data
+// Purpose: Fetch Key Result Indicators from P&L data
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
-
 const router = express.Router();
 
-// DB connection ONCE at app startup (global pool reused)
-sql.connect(dbConfig).then(() => {
-  console.log('DB connected successfully');
-}).catch(err => {
-  console.error('DB Connection Failed:', err);
-});
-
-// Route: Handle POST request
+// Route: Handle POST request for P&L Key Result Info
 router.post('/getKeyResultPlInfo', async (req, res) => {
   try {
     // Extract parameters from payload
@@ -29,14 +20,14 @@ router.post('/getKeyResultPlInfo', async (req, res) => {
       });
     }
 
-    // Reuse global pool
+    // Create request
     const request = new sql.Request();
 
-    // SP input parameters
+    // Map Parameters and datatypes SP Vs frontend
     request.input('Game_Id', sql.NVarChar(20), gameId);
     request.input('Game_Batch', sql.Int, Number(gameBatch));
     request.input('Game_Team', sql.NVarChar(10), gameTeam);
-    request.input('Production_Month', sql.Date, productionMonth || null); 
+    request.input('Production_Month', sql.Date, productionMonth ? new Date(productionMonth) : null);
 
     // Execute stored procedure
     const result = await request.execute('UI_Key_Result_Pl_Info');

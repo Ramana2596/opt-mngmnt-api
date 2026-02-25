@@ -32,18 +32,10 @@ const dbConfig = require('../dbConfig');
 
 const router = express.Router();
 
-// DB connection ONCE at app startup (global pool reused)
-sql.connect(dbConfig).then(() => {
-  console.log('DB connected successfully');
-}).catch(err => {
-  console.error('DB Connection Failed:', err);
-});
-
-// Route: Handle POST request
 router.post('/getOperationalPlanInfo', async (req, res) => {
   try {
-    // Extract parameters from payload
-    const { gameId, gameBatch, gameTeam, productionMonth,cmdLine } = req.body.params || {};
+    // Extract parameters from payload 
+    const { gameId, gameBatch, gameTeam, productionMonth, cmdLine } = req.body.params || {};
 
     // Validate mandatory parameters
     if (!gameId || !gameBatch || !gameTeam || !cmdLine) {
@@ -53,15 +45,15 @@ router.post('/getOperationalPlanInfo', async (req, res) => {
         message: "Missing Parameter",
       });
     }
-
-    // Reuse global pool
+    
+    // Create request 
     const request = new sql.Request();
 
     // Map Parameters and datatypes SP Vs frontend
     request.input('Game_Id', sql.NVarChar(20), gameId);
     request.input('Game_Batch', sql.Int, Number(gameBatch));
     request.input('Game_Team', sql.NVarChar(10), gameTeam);
-    request.input('Production_Month', sql.Date, productionMonth || null); 
+    request.input('Production_Month', sql.Date, productionMonth ? new Date(productionMonth) : null);
     request.input('CMD_Line', sql.NVarChar(200), cmdLine);  // Operation_Plan
 
     // Execute stored procedure
@@ -83,4 +75,3 @@ router.post('/getOperationalPlanInfo', async (req, res) => {
 });
 
 module.exports = router;
-

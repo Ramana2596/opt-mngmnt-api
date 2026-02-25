@@ -1,46 +1,10 @@
 // getProductionInfo.js
-// Updated to map Parameters and datatypes
-
-/*
-const express = require('express');
-const sql = require('mssql');
-const dbConfig = require('../../dbConfig');
-const router = express.Router();
-
-sql.connect(dbConfig).then(() => {
-  router.get('/getProductionInfo', async (req, res) => {
-    try {
-        const request = new sql.Request();
-
-        // Add parameters
-        request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
-        request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch) || null);
-        request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
-
-        const result = await request.execute('UI_Production_Record_Info');
-        res.json(result.recordset);
-    } catch (err) {
-      console.error('Query failed:', err);
-      res.status(500).send('Internal Server Error');
-    }   });
-});
-
-*/
+// Purpose: Production Record Info
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../../dbConfig');
-
 const router = express.Router();
 
-// DB connection ONCE at app startup (global pool reused)
-sql.connect(dbConfig).then(() => {
-  console.log('DB connected successfully');
-}).catch(err => {
-  console.error('DB Connection Failed:', err);
-});
-
-// Route: Handle POST request
 router.post('/getProductionInfo', async (req, res) => {
   try {
     // Extract parameters from payload
@@ -55,14 +19,14 @@ router.post('/getProductionInfo', async (req, res) => {
       });
     }
 
-    // Reuse global pool
+    // Create request 
     const request = new sql.Request();
 
-    // SP input parameters
+    // Map Parameters and datatypes SP Vs frontend
     request.input('Game_Id', sql.NVarChar(20), gameId);
     request.input('Game_Batch', sql.Int, Number(gameBatch));
     request.input('Game_Team', sql.NVarChar(10), gameTeam);
-    request.input('Production_Month', sql.Date, productionMonth || null); 
+    request.input('Production_Month', sql.Date, productionMonth ? new Date(productionMonth) : null);
 
     // Execute stored procedure
     const result = await request.execute('UI_Production_Record_Info');
