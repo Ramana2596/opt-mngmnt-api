@@ -29,7 +29,7 @@ sql.connect(dbConfig).then(() => {
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
+const dbConfig = require('../../dbConfig');
 
 const router = express.Router();
 
