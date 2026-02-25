@@ -15,7 +15,7 @@ sql.connect(dbConfig).then(() => {
 });
 
 // Route: Handle POST request
-router.post('/getKeyResultBsInfo', async (req, res) => {
+router.post('/getKeyResultPlInfo', async (req, res) => {
   try {
     // Extract parameters from payload
     const { gameId, gameBatch, gameTeam, productionMonth } = req.body.params || {};
