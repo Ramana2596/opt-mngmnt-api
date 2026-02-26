@@ -3,12 +3,11 @@
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
-
+//const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 // Establish DB connection at app startup (not per request)
-sql.connect(dbConfig).then(() => {
+//sql.connect(dbConfig).then(() => {
 
   // API endpoint for fetching/updating team progress
   router.post('/getTeamProgressVirtual', async (req, res) => {
@@ -36,9 +35,10 @@ sql.connect(dbConfig).then(() => {
       // Bind stored procedure input parameters (PascalCase for DB)
       request.input('Game_Id', sql.NVarChar(20), gameId);              
       request.input('Game_Batch', sql.Int, Number(gameBatch));         
-      request.input('Game_Team', sql.NVarChar(10), gameTeam);          
-      request.input('Completed_Period', sql.Date, completedPeriod);   
-      request.input('Completed_Stage_No', sql.Int, completedStageNo); 
+      request.input('Game_Team', sql.NVarChar(10), gameTeam);
+      request.input('Completed_Period', sql.Date, completedPeriod.split('T')[0]);
+      request.input('Completed_Stage_No', sql.TinyInt, Number(completedStageNo));
+
 
       // Define output parameter for SP message
       request.output('Out_Message', sql.NVarChar(200));
@@ -60,10 +60,13 @@ sql.connect(dbConfig).then(() => {
       res.status(500).json({ success: false, code: -1, message: err.message });
     }
   });
+module.exports = router;
 
+  /*
 }).catch(err => {
   // Handle DB connection failure at application startup
   console.error('DB Connection Failed:', err);
 });
+*/
 
-module.exports = router;
+
