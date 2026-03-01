@@ -7,7 +7,7 @@ const sql = require('mssql');
 const router = express.Router();
 
 // Route: Handle POST request for P&L Key Result Info
-router.post('/getFgStockInfo', async (req, res) => {
+router.get('/getFgStockInfo', async (req, res) => {
   try {
     // Extract parameters from payload
     const { gameId, gameBatch, gameTeam, productionMonth } = req.body.params || {};
