@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 // Route: Handle POST request for Balance Sheet Key Result Info
-router.get('/getRmStockInfo', async (req, res) => {
+router.post('/getRmStockInfo', async (req, res) => {
   try {
     // Extract parameters from payload
     const { gameId, gameBatch, gameTeam, productionMonth } = req.body.params || {};
