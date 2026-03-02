@@ -31,13 +31,18 @@ const router = express.Router();
       }
 
       const request = new sql.Request();
+      const safeDate = (val) => (typeof val === "string" ? val.split("T")[0] : null);
+      const safeNumber = (val) => (val !== null && val !== undefined ? Number(val) : null);
 
       // Bind stored procedure input parameters (PascalCase for DB)
       request.input('Game_Id', sql.NVarChar(20), gameId);              
       request.input('Game_Batch', sql.Int, Number(gameBatch));         
       request.input('Game_Team', sql.NVarChar(10), gameTeam);
-      request.input('Completed_Period', sql.Date, completedPeriod.split('T')[0]);
-      request.input('Completed_Stage_No', sql.TinyInt, Number(completedStageNo));
+      request.input('Completed_Period', sql.Date, safeDate(completedPeriod));
+      request.input('Completed_Stage_No', sql.TinyInt, safeNumber(completedStageNo));
+      
+      //request.input('Completed_Period', sql.Date, completedPeriod.split('T')[0]);
+      //request.input('Completed_Stage_No', sql.TinyInt, Number(completedStageNo));
 
 
       // Define output parameter for SP message
