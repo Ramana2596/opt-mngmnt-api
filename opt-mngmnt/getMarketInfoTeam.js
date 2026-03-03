@@ -28,7 +28,7 @@ router.post('/getMarketInfoTeam', async (req, res) => {
     request.input('Game_Id', sql.NVarChar(20), gameId);
     request.input('Game_Batch', sql.Int, Number(gameBatch));
     request.input('Game_Team', sql.NVarChar(10), gameTeam);
-    request.input('Production_Month', sql.Date, productionMonth ? new Date(productionMonth) : null);
+    request.input('Production_Month', sql.Date, productionMonth ? productionMonth.split("T")[0] : null);
 
     // Execute stored procedure
     const result = await request.execute('UI_Market_Info_Team');
