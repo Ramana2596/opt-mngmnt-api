@@ -1,12 +1,12 @@
 // getOpsDemandCreationInfo.js
-// Purpose: Fetch Key Result Indicators from Balance Sheet data
+// Purpose: Fetch Demand Created due to Strategy
 
 const express = require('express');
 const sql = require('mssql');
 const router = express.Router();
 
 
-// Route: Handle POST request for Balance Sheet Key Result Info
+// Route: Handle POST request 
 router.post('/getOpsDemandCreationInfo', async (req, res) => {
   try {
     // Extract parameters from payload
