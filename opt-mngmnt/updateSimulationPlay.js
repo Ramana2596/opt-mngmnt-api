@@ -36,7 +36,7 @@ sql.connect(dbConfig).then(() => {
         request.output('Out_Message', sql.NVarChar(200));
 
         // --- Execute Stored Procedure ---
-        const result = await request.execute('UI_Game_Team_Play');
+        const result = await request.execute('UI_Simulation_Centre');
         console.log('Stored procedure result:', result);
     
         // --- Extract values ---
