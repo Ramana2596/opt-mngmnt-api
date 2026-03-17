@@ -37,17 +37,17 @@ router.post('/updateSimulationPlay', async (req, res) => {
     const result = await request.execute('UI_Simulation_Centre');
 
     // Extract SP return values
-    const code = result.returnValue ?? -1;
+    const returnValue = result.returnValue ?? -1;
     const message = result?.output?.Out_Message ?? '';
     const data = result.recordset || [];
 
-    // Successful execution response
-    res.json({ success: true, code, message, data });
+    // Execution response
+    res.json({ returnValue, message, data });
 
   } catch (err) {
     // DB / system error during SP execution
     console.error('SQL Error:', err);
-    res.status(500).json({ success: false, code: -1, message: err.message });
+    res.status(500).json({ returnValue: -1, message: err.message });
   }
 });
 
