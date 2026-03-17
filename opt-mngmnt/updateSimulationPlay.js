@@ -37,7 +37,7 @@ router.post('/updateSimulationPlay', async (req, res) => {
     const result = await request.execute('UI_Simulation_Centre');
 
     // Extract SP return values
-    const code = result.returnValue ?? 0;
+    const code = result.returnValue ?? -1;
     const message = result?.output?.Out_Message ?? '';
     const data = result.recordset || [];
 
