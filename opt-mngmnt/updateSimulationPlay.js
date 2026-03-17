@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/updateSimulationPlay', async (req, res) => {
   try {
     // Extract parameters from payload
-    const { gameId, gameBatch, gameTeam, productionMonth } = req.body.params || {};
+    const { gameId, gameBatch, gameTeam, currentStage, currentPeriod, cmdLine } = req.body;
 
     // Validate mandatory parameters
     if (!gameId || !gameBatch || !gameTeam) {
