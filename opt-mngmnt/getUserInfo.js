@@ -1,3 +1,64 @@
+// getUserRoleInfo.js
+
+const express = require('express');
+const sql = require('mssql');
+const dbConfig = require('../dbConfig');
+
+const router = express.Router();
+
+// DB connection at app startup (not per request)
+sql.connect(dbConfig).then(() => {
+
+    router.post('/getUserRoleAssign', async (req, res) => {
+        try {
+            const { gameId, userId, pfId, cmdLine } = req.body;
+
+            if (!gameId || !userId || !pfId || !cmdLine) {
+                return res.status(400).json({
+                    success: false,
+                    code: -1,
+                    message: "Missing Parameters",
+                });
+            }
+            const request = new sql.Request();
+
+            // SP input parameters
+            request.input('Game_Id', sql.NVarChar(20), gameId);
+            request.input('User_Id', sql.Int, Number(userId));
+            request.input('PF_Id', sql.Int, Number(pfId));
+            request.input('CMD_Line', sql.NVarChar(50), cmdLine);
+
+            // SP output parameter
+            //request.output('Out_Message', sql.NVarChar(200));
+
+            // Execute SP
+            const result = await request.execute('UI_User_Role_Query');
+
+            // Extract return code, message, and data
+            res.json(result.recordset);
+            //const code = result.returnValue ?? 0;
+            //const message = result.output?.Out_Message || '';
+            //const data = result.recordset?.[0] || null;
+
+            // Normal business response
+            //res.json({ success: code === 0, code, message, data });
+
+        } catch (err) {
+            // SQL Error SP execution (THROW 50001)
+            console.error('SQL Error:', err);
+            //res.status(500).json({ success: false, code: -1, message: err.message });
+            res.status(500).send('Internal Server Error');
+        }
+    });
+
+}).catch(err => {
+    // NW / DB onnection failure at application startup
+    console.error('DB Connection Failed:', err);
+});
+
+module.exports = router;
+
+/*
 const express = require('express');
 const sql = require('mssql');
 const dbConfig = require('../dbConfig');
@@ -44,3 +105,4 @@ sql.connect(dbConfig).then(() => {
 });
 
 module.exports = router;
+*/
