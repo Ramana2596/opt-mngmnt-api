@@ -1,4 +1,4 @@
-// getUserRoleInfo.js
+// getUserInfo.js
 
 const express = require('express');
 const sql = require('mssql');
@@ -9,11 +9,11 @@ const router = express.Router();
 // DB connection at app startup (not per request)
 sql.connect(dbConfig).then(() => {
 
-    router.post('/getUserRoleAssign', async (req, res) => {
+    router.post('/getUserInfo', async (req, res) => {
         try {
             const { gameId, userId, pfId, cmdLine } = req.body;
 
-            if (!gameId || !userId || !pfId || !cmdLine) {
+            if (!gameId || !cmdLine) {
                 return res.status(400).json({
                     success: false,
                     code: -1,
@@ -22,10 +22,10 @@ sql.connect(dbConfig).then(() => {
             }
             const request = new sql.Request();
 
-            // SP input parameters
+            // SP input parameters : Pass values or NULL if not required
             request.input('Game_Id', sql.NVarChar(20), gameId);
-            request.input('User_Id', sql.Int, Number(userId));
-            request.input('PF_Id', sql.Int, Number(pfId));
+            request.input('User_Id', sql.Int, userId ? Number(userId) : null);
+            request.input('PF_Id', sql.Int, pfId ? Number(pfId) : null);
             request.input('CMD_Line', sql.NVarChar(50), cmdLine);
 
             // SP output parameter
@@ -73,8 +73,8 @@ sql.connect(dbConfig).then(() => {
                 EXEC [dbo].[UI_User_Role_Query]
                 @Game_Id = '${req.query.gameId}',
                 @User_Id= NULL,
-	            @PF_Id = NULL,
-	            @CMD_Line = ${cmdLine}
+                @PF_Id = NULL,
+                @CMD_Line = ${cmdLine}
                 `);
                 res.json(result.recordset);
             } else if (cmdLine === 'Get_Valid_Roles') {
@@ -82,8 +82,8 @@ sql.connect(dbConfig).then(() => {
                 EXEC [dbo].[UI_User_Role_Query]
                 @Game_Id = '${req.query.gameId}',
                 @User_Id= NULL,
-	            @PF_Id = ${req.query.pfId ? `'${req.query.pfId}'` : 'NULL'},
-	            @CMD_Line = ${cmdLine}
+                @PF_Id = ${req.query.pfId ? `'${req.query.pfId}'` : 'NULL'},
+                @CMD_Line = ${cmdLine}
                 `);
                 res.json(result.recordset);
             } else if (cmdLine === 'Get_Approved_Roles') {
@@ -91,8 +91,8 @@ sql.connect(dbConfig).then(() => {
                 EXEC [dbo].[UI_User_Role_Query]
                 @Game_Id = '${req.query.gameId}',
                 @User_Id= ${req.query.userId ? `'${req.query.userId}'` : 'NULL'},
-	            @PF_Id = ${req.query.pfId ? `'${req.query.pfId}'` : 'NULL'},
-	            @CMD_Line = ${cmdLine}
+                @PF_Id = ${req.query.pfId ? `'${req.query.pfId}'` : 'NULL'},
+                @CMD_Line = ${cmdLine}
                 `);
                 res.json(result.recordset);
             }
