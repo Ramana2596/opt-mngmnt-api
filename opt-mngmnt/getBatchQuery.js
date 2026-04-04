@@ -6,15 +6,15 @@ const router = express.Router();
 
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getBatchQuery', async (req, res) => {
+    router.post('/getBatchQuery', async (req, res) => {
         try {
             
             const request = new sql.Request();
 
             // Use correct Data types based on SQL Server stored procedure
-            request.input('Game_Id', sql.NVarChar, req.query.gameId  || null);
-            request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch)  || null);
-            request.input('CMD_Line', sql.NVarChar, req.query.cmdLine|| null);
+            request.input('Game_Id', sql.NVarChar, req.body.gameId  || null);
+            request.input('Game_Batch', sql.Int, parseInt(req.body.gameBatch)  || null);
+            request.input('CMD_Line', sql.NVarChar, req.body.cmdLine|| null);
 
             const result = await request.execute('UI_Batch_Query');
 
@@ -37,11 +37,11 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getBatchQuery', async (req, res) => {
+    router.post('/getBatchQuery', async (req, res) => {
         try {
-            const gameId = req.query.gameId || null;
-            const gameBatch = req.query.gameBatch ? parseInt(req.query.gameBatch) : null;
-            const cmdLine = req.query.cmdLine || null;
+            const gameId = req.body.gameId || null;
+            const gameBatch = req.body.gameBatch ? parseInt(req.body.gameBatch) : null;
+            const cmdLine = req.body.cmdLine || null;
 
             // Construct SQL string safely (parameterized)
             const query = `
