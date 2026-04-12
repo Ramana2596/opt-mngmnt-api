@@ -1,16 +1,16 @@
-// getUserInfo.js
+// getUserRoleQuery.js
 
 // Standardized: returnValue (from @SucValue), Message, Data
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
+//const dbConfig = require('../dbConfig');
 
 const router = express.Router();
 
-sql.connect(dbConfig).then(() => {
+//sql.connect(dbConfig).then(() => {
 
-    router.post('/getUserInfo', async (req, res) => {
+    router.post('/getUserRoleQuery', async (req, res) => {
         try {
             const { gameId, userId, pfId, cmdLine } = req.body;
 
@@ -61,9 +61,9 @@ sql.connect(dbConfig).then(() => {
         }
     });
 
-}).catch(err => {
-    console.error('DB Connection Failed:', err);
-});
+//}).catch(err => {
+//    console.error('DB Connection Failed:', err);
+//});
 
 module.exports = router;
 
@@ -77,7 +77,7 @@ const router = express.Router();
 // DB connection at app startup (not per request)
 sql.connect(dbConfig).then(() => {
 
-    router.post('/getUserInfo', async (req, res) => {
+    router.post('/getUserRoleQuery', async (req, res) => {
         try {
             const { gameId, userId, pfId, cmdLine } = req.body;
 
@@ -135,7 +135,7 @@ const dbConfig = require('../dbConfig');
 const router = express.Router();
 
 sql.connect(dbConfig).then(() => {
-    router.get('/getUserInfo', async (req, res) => {
+    router.get('/getUserRoleQuery', async (req, res) => {
         try {
             const cmdLine = req.query.cmdLine || '';
             if (cmdLine === 'Get_User') {
