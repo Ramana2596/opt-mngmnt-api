@@ -4,11 +4,11 @@
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
+//const dbConfig = require('../dbConfig');
 
 const router = express.Router();
 
-sql.connect(dbConfig).then(() => {
+//sql.connect(dbConfig).then(() => {
 
     router.post('/getUserRoleQuery', async (req, res) => {
         try {
@@ -61,9 +61,9 @@ sql.connect(dbConfig).then(() => {
         }
     });
 
-}).catch(err => {
-    console.error('DB Connection Failed:', err);
-});
+//}).catch(err => {
+//    console.error('DB Connection Failed:', err);
+//});
 
 module.exports = router;
 
