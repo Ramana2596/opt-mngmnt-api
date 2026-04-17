@@ -16,7 +16,7 @@ sql.connect(dbConfig).then(() => {
             request.input('Game_Batch', sql.Int, parseInt(req.body.gameBatch)  || null);
             request.input('CMD_Line', sql.NVarChar, req.body.cmdLine|| null);
 
-            const result = await request.execute('UI_Batch_Query');
+            const result = await request.execute('UI_Batch_Mst_Query');
 
             res.json(result.recordset);
         } catch (err) {
