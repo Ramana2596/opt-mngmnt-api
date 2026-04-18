@@ -31,7 +31,8 @@ router.post('/updateUserRole', async (req, res) => {
             request.input('Game_Id', sql.NVarChar(20), item.gameId);
             request.input('User_Id', sql.Int, item.userId ? Number(item.userId) : null);
             request.input('RL_Id', sql.Int, item.roleId ? Number(item.roleId) : null);
-            request.input('Created_By', sql.NVarChar(50), item.approvedUserId ? item.approvedUserId : null);
+            request.input('Approved_By', sql.Int, item.approvedBy ? Number(item.approvedBy) : null);
+//            request.input('Created_By', sql.NVarChar(50), item.approvedUserId ? item.approvedUserId : null);
             request.input('CMD_Line', sql.NVarChar(50), item.cmdLine);
 
             // Optional Output Parameters for SP feedback
