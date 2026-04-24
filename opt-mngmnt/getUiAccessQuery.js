@@ -12,7 +12,7 @@ router.post('/getUiAccessQuery', async (req, res) => {
     try {
         const { gameId, rlId, cmdLine } = req.body;
 
-        if (!gameId || !rlId || !cmdLine) {
+        if (!gameId || !cmdLine) {
             return res.status(400).json({
                 returnValue: 400,
                 Message: "Missing Parameters",
