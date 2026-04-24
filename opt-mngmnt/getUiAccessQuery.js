@@ -3,10 +3,7 @@
 
 const express = require('express');
 const sql = require('mssql');
-//const dbConfig = require('../dbConfig');
-
 const router = express.Router();
-
 
 router.post('/getUiAccessQuery', async (req, res) => {
     try {
@@ -24,17 +21,16 @@ router.post('/getUiAccessQuery', async (req, res) => {
 
         // SP Inputs 
         request.input('Game_Id', sql.NVarChar(20), gameId);
-        request.input('RL_Id', sql.Int, rlId);
+        request.input('RL_Id', sql.Int, rlId ? Number(rlId) : null);
         request.input('CMD_Line', sql.NVarChar(50), cmdLine);
 
-        // Define Output Parameters (ignored if not used in SP )
+        // Output Parameters (ignored if not used in SP )
         request.output('Out_Message', sql.NVarChar(200));
         request.output('SucValue', sql.Int);
 
         // Execute SP
         const result = await request.execute('UI_Access_Query');
 
-        // --- REPORT SP RESULTS
         // Prioritize @SucValue over standard returnValue
         const finalReturn = (result.output?.SucValue !==
             undefined && result.output?.SucValue !== null)
