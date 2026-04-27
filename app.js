@@ -14,11 +14,6 @@ app.use(cors());
 // Ensure preflight requests are handled with CORS headers
 app.options('*', cors());
 
-// Mount OAuth routes before loading other routes
-// OAuth thru Google/GitHub/Microsoft login / DB 
-const authRoutes = require("D:/Git_OpsMgt/authHub/authRoutes.js");
-app.use(authRoutes);
-
 // Make initial DB connect attempt but don't allow rejections to bubble
 sql.connect(sqlConfig)
   .then(() => console.log('Connected to SQL Server'))
