@@ -8,11 +8,6 @@ const sqlConfig = require('./dbConfig');
 const app = express();
 const port = process.env.PORT || 4000;
 
-// // Bypasses ngrok message
-app.use((req, res, next) => {
-  res.setHeader("ngrok-skip-browser-warning", "true");
-  next();
-});
 
 // Session + Passport setup
 const session = require("express-session");
