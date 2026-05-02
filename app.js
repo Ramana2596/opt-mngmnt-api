@@ -8,15 +8,18 @@ const sqlConfig = require('./dbConfig');
 const app = express();
 const port = process.env.PORT || 4000;
 
-// // Bypasses ngrok message
+// Bypasses ngrok message
+/*
 app.use((req, res, next) => {
   res.setHeader("ngrok-skip-browser-warning", "true");
   next();
 });
+*/
 
 // Session + Passport setup
 const session = require("express-session");
-const passport = require(path.join(__dirname, "..", "authHub", "authFramework.js"));
+
+//const passport = require(path.join(__dirname, "..", "authHub", "authFramework.js"));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "OMTPfounder", // replace with a strong secret
@@ -24,12 +27,12 @@ app.use(session({
   saveUninitialized: false
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 
 // Mount OAuth routes before loading other routes
-const authRoutes = require(path.join(__dirname, "..", "authHub", "authRoutes.js"));
-app.use(authRoutes);
+//const authRoutes = require(path.join(__dirname, "..", "authHub", "authRoutes.js"));
+//app.use(authRoutes);
 
 // Middleware to parse JSON
 app.use(express.json());
