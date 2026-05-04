@@ -17,7 +17,8 @@ app.use((req, res, next) => {
 // Session + Passport setup
 const session = require("express-session");
 
-const passport = require(path.join(__dirname, "..", "authHub", "authFramework.js"));
+// Load Passport authentication framework
+const passport = require("./authHub/authFramework");
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "OMTPfounder", // replace with a strong secret
@@ -28,16 +29,16 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Mount OAuth routes before loading other routes
-const authRoutes = require(path.join(__dirname, "..", "authHub", "authRoutes.js"));
-app.use(authRoutes);
-
 // Middleware to parse JSON
 app.use(express.json());
 
 app.use(cors());
 // Ensure preflight requests are handled with CORS headers
 app.options('*', cors());
+
+// Load OAuth routes before loading other routes
+const authRoutes = require("./authHub/authRoutes");
+app.use(authRoutes);
 
 // Make initial DB connect attempt but don't allow rejections to bubble
 sql.connect(sqlConfig)
