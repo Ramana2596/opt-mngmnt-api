@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // app.js - Main entry point for the Express application
 const express = require('express');
 const fs = require('fs');
