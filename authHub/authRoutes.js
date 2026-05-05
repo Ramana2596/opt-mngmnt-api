@@ -24,7 +24,7 @@ function isProviderEnabled(name) {
  //  SUCCESS: Then Redirect to frontend
 function redirectSuccess(req, res, provider) {
   const userId = req.user?.User_Id || "";  // safe fallback for runtime only
-  
+
   return res.redirect(
     `${FRONTEND_URL}/authHubPage` +
     `?status=success` +
@@ -108,7 +108,7 @@ if (isProviderEnabled("facebook")) {
  //  UNIFIED FAILURE HANDLING
 router.get("/auth/failure", (req, res) => {
 
-  console.error("[AUTH FAILURE]", {   improved diagnostics
+  console.error("[AUTH FAILURE]", {  
     query: req.query,
     path: req.path
   });
