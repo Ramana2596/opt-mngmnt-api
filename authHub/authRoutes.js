@@ -23,8 +23,8 @@ function isProviderEnabled(name) {
 
  //  SUCCESS: Then Redirect to frontend
 function redirectSuccess(req, res, provider) {
-  const userId = req.user?.User_Id || "";   safe fallback for runtime only (not config)
-
+  const userId = req.user?.User_Id || "";  // safe fallback for runtime only
+  
   return res.redirect(
     `${FRONTEND_URL}/authHubPage` +
     `?status=success` +
