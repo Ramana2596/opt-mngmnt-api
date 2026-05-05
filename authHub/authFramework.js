@@ -11,7 +11,12 @@ const FacebookStrategy = require("passport-facebook").Strategy;
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
-// USER UPSERT (FIXED FOR REAL TABLE STRUCTURE)
+// OAuth Config Safety Check Utility
+function hasOAuthConfig(...keys) {
+  return keys.every(k => process.env[k] && process.env[k].trim() !== "");
+}
+
+// CREATE NEW USER / GET EXISTING USER FROM DB
 async function findOrCreateUser(profile, provider) {
   const pool = await sql.connect(dbConfig);
 
@@ -25,7 +30,7 @@ async function findOrCreateUser(profile, provider) {
     profile.username ||
     "Unknown User";
 
-  const gameId = "OpsMgt"; 
+  const gameId = "OpsMgt";
   const assuranceLevel = 1;
 
   const result = await pool.request()
@@ -79,73 +84,101 @@ async function findUserById(id) {
   return result.recordset[0];
 }
 
-// GOOGLE OAUTH
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/auth/google/callback"
-},
-async (accessToken, refreshToken, profile, done) => {
-  try {
-    const user = await findOrCreateUser(profile, "google");
-    return done(null, user);
-  } catch (err) {
-    return done(err, null);
-  }
-}));
+// GOOGLE OAUTH STRATEGY
+if (hasOAuthConfig("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET")) {
 
-// MICROSOFT OAUTH
-passport.use(new MicrosoftStrategy({
-  clientID: process.env.MS_CLIENT_ID,
-  clientSecret: process.env.MS_CLIENT_SECRET,
-  callbackURL: "/auth/microsoft/callback"
-},
-async (accessToken, refreshToken, profile, done) => {
-  try {
-    const user = await findOrCreateUser(profile, "microsoft");
-    return done(null, user);
-  } catch (err) {
-    return done(err, null);
-  }
-}));
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/auth/google/callback"
+  },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = await findOrCreateUser(profile, "google");
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }));
 
-// LINKEDIN OAUTH
-passport.use(new LinkedInStrategy({
-  clientID: process.env.LINKEDIN_CLIENT_ID,
-  clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-  callbackURL: "/auth/linkedin/callback",
-  scope: ["r_emailaddress", "r_liteprofile"]
-},
-async (accessToken, refreshToken, profile, done) => {
-  try {
-    const user = await findOrCreateUser(profile, "linkedin");
-    return done(null, user);
-  } catch (err) {
-    return done(err, null);
-  }
-}));
+} else {
+  console.warn("[AUTH] Google OAuth disabled ");
+}
 
-//FACEBOOK OAUTH
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_CLIENT_ID,
-  clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-  callbackURL: "/auth/facebook/callback",
-  profileFields: ["id", "displayName", "emails"]
-},
-async (accessToken, refreshToken, profile, done) => {
-  try {
-    const user = await findOrCreateUser(profile, "facebook");
-    return done(null, user);
-  } catch (err) {
-    return done(err, null);
-  }
-}));
+// MICROSOFT OAUTH STRATEGY 
+if (hasOAuthConfig("MS_CLIENT_ID", "MS_CLIENT_SECRET")) {
 
-// SESSION MANAGEMENT
+  passport.use(new MicrosoftStrategy({
+    clientID: process.env.MS_CLIENT_ID,
+    clientSecret: process.env.MS_CLIENT_SECRET,
+    callbackURL: "/auth/microsoft/callback"
+  },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = await findOrCreateUser(profile, "microsoft");
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }));
+
+} else {
+  console.warn("[AUTH] Microsoft OAuth disabled ");
+}
+
+// LINKEDIN OAUTH STRATEGY 
+if (hasOAuthConfig("LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET")) {
+
+  passport.use(new LinkedInStrategy({
+    clientID: process.env.LINKEDIN_CLIENT_ID,
+    clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+    callbackURL: "/auth/linkedin/callback",
+    scope: ["r_emailaddress", "r_liteprofile"]
+  },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = await findOrCreateUser(profile, "linkedin");
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }));
+
+} else {
+  console.warn("[AUTH] LinkedIn OAuth disabled ");
+}
+
+// FACEBOOK OAUTH STRATEGY 
+if (hasOAuthConfig("FACEBOOK_CLIENT_ID", "FACEBOOK_CLIENT_SECRET")) {
+
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    callbackURL: "/auth/facebook/callback",
+    profileFields: ["id", "displayName", "emails"]
+  },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = await findOrCreateUser(profile, "facebook");
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }));
+
+} else {
+  console.warn("[AUTH] Facebook OAuth disabled ");
+}
+
+// SAVE USER INFO IN LOGIN SESSION
 passport.serializeUser((user, done) => {
+  if (!user || !user.User_Id) {
+    return done(new Error("Invalid user serialization"));
+  }
   done(null, user.User_Id);
 });
 
+// GET USER DETAILS BACK FROM LOGIN SESSION
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await findUserById(id);
