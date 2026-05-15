@@ -1,8 +1,9 @@
 // file: registerUser.js
-// Create User Account WITHOUT PASSWORD
+// Create User Account WITH PASSWORD during final onboarding step
 
 const express = require('express');
 const sql = require('mssql');
+const bcrypt = require('bcrypt');
 const router = express.Router();
 
 // Route handler: Register user profile
@@ -12,6 +13,7 @@ router.post('/registerUser', async (req, res) => {
         const {
             name,
             email,
+            password,                 // ✅ Added password support
             learnMode,
             pfId,
             countryId,
@@ -36,13 +38,25 @@ router.post('/registerUser', async (req, res) => {
             });
         }
 
+        // Validate mandatory password
+        if (!password || !password.trim()) {
+            return res.status(400).json({
+                returnValue: -1,
+                userId: null,
+                message: 'Password is required'
+            });
+        }
+
+        // ✅ Hash password before DB insert
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         // Create SQL request object
         const request = new sql.Request();
 
         // Pass input parameters to stored procedure
         request.input('User_Name', sql.NVarChar(50), name);
         request.input('User_Email', sql.NVarChar(100), email);
-        request.input('Password', sql.NVarChar(255), null);         // Password intentionally null
+        request.input('Password', sql.NVarChar(255), hashedPassword); // ✅ changed
         request.input('Learn_Mode', sql.NVarChar(20), learnMode || '');
         request.input('PF_Id', sql.Int, pfId);
         request.input('Country_Id', sql.Int, countryId);
@@ -54,7 +68,7 @@ router.post('/registerUser', async (req, res) => {
         request.input('Reset_Expiry', sql.DateTime, null);
 
         // Command mode defaults to Add_User
-        request.input( 'CMD_Line', sql.NVarChar(100), cmdLine || 'Add_User');
+        request.input('CMD_Line', sql.NVarChar(100), cmdLine || 'Add_User');
 
         // Output parameters
         request.output('User_Id', sql.Int);
