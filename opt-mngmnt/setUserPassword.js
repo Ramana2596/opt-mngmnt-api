@@ -32,7 +32,7 @@ router.post('/setUserPassword', async (req, res) => {
         request.input('CMD_Line', sql.NVarChar(100), 'Set_Password');
 
         // Output parameters
-        request.output('User_Id', sql.Int);
+
         request.output('Out_Message', sql.NVarChar(200));
 
         const result = await request.execute('UI_User_Profile_Trans');
