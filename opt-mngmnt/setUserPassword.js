@@ -1,5 +1,5 @@
 // file: setUserPassword.js
-// Set User Password
+// Set hashed password for registered user
 
 const express = require('express');
 const sql = require('mssql');
@@ -8,38 +8,30 @@ const router = express.Router();
 
 router.post('/setUserPassword', async (req, res) => {
     try {
-        const {
-            email,
-            password,
-            pfId,
-            countryId,
-            zoneId,
-            mobileNo
-        } = req.body;
+        // Extract required inputs
+        const { userId, password } = req.body;
 
-        if (!email || !password) {
+        // Validate mandatory inputs
+        if (!userId || !password) {
             return res.status(400).json({
                 returnValue: -1,
-                message: 'Email and password are required'
+                userId: null,
+                message: 'UserId and password are required'
             });
         }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Create SQL request
         const request = new sql.Request();
 
-        request.input('User_Email', sql.NVarChar(100), email);
+        // Required inputs for Set_Password only
+        request.input('User_Id', sql.Int, userId);
         request.input('Password', sql.NVarChar(255), hashedPassword);
+        request.input('CMD_Line', sql.NVarChar(100), 'Set_Password');
 
-        request.input('Learn_Mode', sql.NVarChar(20), null);
-        request.input('PF_Id', sql.Int, pfId);
-        request.input('Country_Id', sql.Int, countryId);
-        request.input('Zone_Id', sql.Int, zoneId);
-        request.input('Mobile_No', sql.NVarChar(20), mobileNo);
-
-        request.input('CMD_Line', sql.NVarChar(100), 'Update_User');
-
+        // Output parameters
         request.output('User_Id', sql.Int);
         request.output('Out_Message', sql.NVarChar(200));
 
@@ -47,13 +39,18 @@ router.post('/setUserPassword', async (req, res) => {
 
         return res.json({
             returnValue: result.returnValue,
-            userId: result.output.User_Id || null,
-            message: result.output.Out_Message
+            userId: result.output.User_Id || userId,
+            message:
+                result.output.Out_Message ||
+                (result.returnValue === 0
+                    ? 'Password set successfully'
+                    : 'Check Input!')
         });
 
     } catch (err) {
         return res.status(500).json({
             returnValue: -1,
+            userId: null,
             message: `Server error: ${err.message}`
         });
     }
