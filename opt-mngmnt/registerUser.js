@@ -13,7 +13,7 @@ router.post('/registerUser', async (req, res) => {
         const {
             name,
             email,
-            password,                 // ✅ Added password support
+            password,
             learnMode,
             pfId,
             countryId,
@@ -47,7 +47,7 @@ router.post('/registerUser', async (req, res) => {
             });
         }
 
-        // ✅ Hash password before DB insert
+        //Hash password before DB insert
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create SQL request object
@@ -56,8 +56,8 @@ router.post('/registerUser', async (req, res) => {
         // Pass input parameters to stored procedure
         request.input('User_Name', sql.NVarChar(50), name);
         request.input('User_Email', sql.NVarChar(100), email);
-        request.input('Password', sql.NVarChar(255), hashedPassword); // ✅ changed
-        request.input('Learn_Mode', sql.NVarChar(20), learnMode || '');
+        request.input('Password', sql.NVarChar(255), hashedPassword); 
+        //request.input('Learn_Mode', sql.NVarChar(20), learnMode || '');
         request.input('PF_Id', sql.Int, pfId);
         request.input('Country_Id', sql.Int, countryId);
 
@@ -66,6 +66,7 @@ router.post('/registerUser', async (req, res) => {
         request.input('Mobile_No', sql.NVarChar(20), null);
         request.input('Reset_Token', sql.NVarChar(255), null);
         request.input('Reset_Expiry', sql.DateTime, null);
+        request.input('Modified_By', sql.Int, null);
 
         // Command mode defaults to Add_User
         request.input('CMD_Line', sql.NVarChar(100), cmdLine || 'Add_User');
@@ -81,6 +82,7 @@ router.post('/registerUser', async (req, res) => {
         return res.json({
             returnValue: result.returnValue,
             userId: result.output.User_Id || null,
+            sucValue: result.output.SucValue || null,
             message:
                 result.output.Out_Message ||
                 (result.returnValue === 0
