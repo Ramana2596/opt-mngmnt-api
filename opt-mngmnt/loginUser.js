@@ -1,5 +1,5 @@
-// Filename: loginUser.js
-// Authenticate user login using email and password
+// Filename: getUserProfile.js
+// Authenticate user login and return streamlined session properties
 
 const express = require('express');
 const sql = require('mssql');
@@ -30,7 +30,7 @@ router.post('/loginUser', async (req, res) => {
 
         const result = await request.execute('UI_User_Profile_Query');
 
-        // Validate user exists
+        // Validate user exists and is active 
         if (!result.recordset || result.recordset.length === 0) {
             return res.status(401).json({
                 success: false,
@@ -38,24 +38,16 @@ router.post('/loginUser', async (req, res) => {
             });
         }
 
-        // Extract user record
+        // Extract raw user record row
         const user = result.recordset[0];
 
-        // Validate active user status
-        if ((user.User_Status || '').toLowerCase() !== 'active') {
-            return res.status(403).json({
-                success: false,
-                message: 'User account is not active'
-            });
-        }
-
-        // Compare entered password with stored hash
+        // Compare entered password with stored database hash
         const isPasswordValid = await bcrypt.compare(
             password,
             user.Password
         );
 
-        // Reject invalid password
+        // Reject invalid credential match
         if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
@@ -63,21 +55,14 @@ router.post('/loginUser', async (req, res) => {
             });
         }
 
-        // Return authenticated user details (safe response only)
-        return res.json({
-            success: true,
-            user: {
-                userId: user.User_Id,
-                userName: user.User_Name,
-                userEmail: user.User_Email,
-                professionId: user.PF_Id,
-                countryId: user.Country_Id,
-                trustLevel: user.Trust_Level
-            }
-        });
+ 
+        // Delte password from recordset, Once bcrypt.compare matches
+        delete user.Password;
+
+        return res.json(result.recordset);
 
     } catch (err) {
-        console.error('Login failed:', err);
+        console.error('Login authentication process failed:', err);
 
         return res.status(500).json({
             success: false,
