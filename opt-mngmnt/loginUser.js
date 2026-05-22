@@ -1,4 +1,4 @@
-// Filename: getUserProfile.js
+// File: loginUser.js
 // Authenticate user login and return streamlined session properties
 
 const express = require('express');
