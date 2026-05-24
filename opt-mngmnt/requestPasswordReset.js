@@ -100,7 +100,7 @@ router.post('/requestPasswordReset', async (req, res) => {
             sucValue: dbSucValue,
             // Status messages
             message: dbSucValue === 0 
-                ? (isEmailEnabled ? 'Reset link sent to email.' : 'Token generated (Email disabled).') 
+                ? (isEmailEnabled ? 'Reset link sent to email.' : 'Token generated (Email disabled, Configure .env file).') 
                 : dbOutMessage
         });
 
