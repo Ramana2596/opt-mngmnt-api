@@ -1,6 +1,5 @@
 // file: requestPasswordReset.js
-// Directory: D:\Git_OpsMgt\opt-mngmnt-api\opt-mngmnt\requestPasswordReset.js
-
+// Password reset: token generation, DB update, and email enabled, if set in .env configuration.
 const express = require('express');
 const sql = require('mssql');
 const crypto = require('crypto');
@@ -64,8 +63,11 @@ router.post('/requestPasswordReset', async (req, res) => {
         const dbSucValue = result.output.SucValue;
         const dbOutMessage = result.output.Out_Message;
 
-        // If validation passed and token saved successfully (SucValue === 0), send email
-        if (dbSucValue === 0) {
+        // Determine if email is enabled via environment configuration
+        const isEmailEnabled = process.env.ENABLE_EMAIL === 'true';
+
+        // If token generated & email set, send email
+        if (dbSucValue === 0 && isEmailEnabled) { 
             const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
             const resetLink = `${baseUrl}/reset-password?token=${generatedToken}&gameId=${gameId}&email=${encodeURIComponent(email.trim())}`;
             
@@ -96,8 +98,9 @@ router.post('/requestPasswordReset', async (req, res) => {
         return res.json({
             returnValue: result.returnValue,
             sucValue: dbSucValue,
+            // Status messages
             message: dbSucValue === 0 
-                ? 'A secure reset link has been dispatched to your email address.' 
+                ? (isEmailEnabled ? 'Reset link sent to email.' : 'Token generated (Email disabled).') 
                 : dbOutMessage
         });
 
