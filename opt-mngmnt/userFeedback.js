@@ -6,7 +6,7 @@ const router  = express.Router();
 const sql     = require('mssql');
 
 // Route POST  — handler based on cmdLine
-router.post('/', async (req, res) => {
+router.post('/userFeedback', async (req, res) => {
     const { cmdLine } = req.body;
 
     if (cmdLine === 'Get_Config') return handleGetConfig(req, res);
@@ -32,7 +32,7 @@ async function handleGetConfig(req, res) {
     }
 }
 
-// Validate and submit user feedback record to DB
+// Validate and Add record to DB
 async function handleSubmit(req, res) {
     const { userId, uiId, feedbackWidgetId, feedbackOptionId, feedback, rating } = req.body;
 
@@ -55,7 +55,7 @@ async function handleSubmit(req, res) {
         request.output('SucValue',    sql.Int);
         request.output('Out_Message', sql.NVarChar(200));
 
-        // Execute SP and return result based on SucValue
+        // Execute SP and return result
         const result     = await request.execute('UI_Feedback_Trans');
         const sucValue   = result.output.SucValue;
         const outMessage = result.output.Out_Message;
