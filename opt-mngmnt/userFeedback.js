@@ -37,7 +37,7 @@ async function handleSubmit(req, res) {
     const { userId, uiId, feedbackWidgetId, feedbackOptionId, feedback, rating } = req.body;
 
     // Reject if required fields are missing
-    if (!userId || !uiId || !feedbackWidgetId || !feedbackOptionId) {
+    if (!userId || !feedbackWidgetId || !feedbackOptionId) {
         return res.status(400).json({ returnStatus: 1, message: 'Missing required feedback fields.' });
     }
 
