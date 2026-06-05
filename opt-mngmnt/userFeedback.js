@@ -1,27 +1,25 @@
-// userFeedback.js
-const express      = require('express');
-const router       = express.Router();
-const sql          = require('mssql');
-const { getPool }  = require('../db/pool');
+// userFeedback.js 
+// Get user feedback config and add feedback
 
-// ── POST /api/feedback  cmdLine: Get_Config | Submit ─────────────────
+const express = require('express');
+const router  = express.Router();
+const sql     = require('mssql');
+
+// Route POST  — handler based on cmdLine
 router.post('/', async (req, res) => {
     const { cmdLine } = req.body;
 
-    // Route to handler based on cmdLine
     if (cmdLine === 'Get_Config') return handleGetConfig(req, res);
     if (cmdLine === 'Submit')     return handleSubmit(req, res);
 
     return res.status(400).json({ returnStatus: 1, message: 'Invalid cmdLine.' });
 });
 
-// ── Fetch widgets and options 
+// Fetch feedback widgets and options from DB
 async function handleGetConfig(req, res) {
     try {
-        const pool   = await getPool();
-        const result = await pool.request().execute('UI_Feedback_Query');
+        const result = await new sql.Request().execute('UI_Feedback_Query');
 
-        // ResultSet 0 = widgets, ResultSet 1 = options
         return res.json({
             returnStatus : 0,
             widgets      : result.recordsets[0],
@@ -34,20 +32,19 @@ async function handleGetConfig(req, res) {
     }
 }
 
-// ── Submit: record feedback row 
+// Validate and submit user feedback record to DB
 async function handleSubmit(req, res) {
     const { userId, uiId, feedbackWidgetId, feedbackOptionId, feedback, rating } = req.body;
 
-    // Basic validation before hitting DB
+    // Reject if required fields are missing
     if (!userId || !uiId || !feedbackWidgetId || !feedbackOptionId) {
         return res.status(400).json({ returnStatus: 1, message: 'Missing required feedback fields.' });
     }
 
     try {
-        const pool    = await getPool();
-        const request = pool.request();
+        // Payload matching SP 
+        const request = new sql.Request();
 
-        // Input parameters
         request.input('User_Id',            sql.Int,            userId);
         request.input('UI_Id',              sql.NVarChar(20),   uiId);
         request.input('Feedback_Widget_Id', sql.TinyInt,        feedbackWidgetId);
@@ -55,10 +52,10 @@ async function handleSubmit(req, res) {
         request.input('Feedback',           sql.NVarChar(2000), feedback  || null);
         request.input('Rating',             sql.TinyInt,        rating    || null);
 
-        // Output parameters
         request.output('SucValue',    sql.Int);
         request.output('Out_Message', sql.NVarChar(200));
 
+        // Execute SP and return result based on SucValue
         const result     = await request.execute('UI_Feedback_Trans');
         const sucValue   = result.output.SucValue;
         const outMessage = result.output.Out_Message;
