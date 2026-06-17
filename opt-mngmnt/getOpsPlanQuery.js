@@ -33,6 +33,13 @@ sql.connect(dbConfig).then(() => {
 
       const result = await request.execute("UI_Ops_Business_Plan_Query");
 
+
+console.log(
+  "Buy_Info SQL Result:",
+  JSON.stringify(result.recordset, null, 2)
+);
+
+
       // Return raw recordset
       res.json(result.recordset || []);
     } catch (err) {
