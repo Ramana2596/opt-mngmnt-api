@@ -25,8 +25,8 @@ sql.connect(dbConfig).then(() => {
       request.input("Part_No", sql.NVarChar, req.query.partNo || null);
       request.input("Reqd_Qty", sql.SmallInt, parseInt(req.query.reqdQty) || null);
     //  request.input("Part_Category", sql.NVarChar, req.query.partCategory || null);
-      request.input("Ref_Type_Info", sql.NVarChar, req.query.refTypeInfo || null);
-      request.input("Ref_Type_Price", sql.NVarChar, req.query.refTypePrice || null);
+    //  request.input("Ref_Type_Info", sql.NVarChar, req.query.refTypeInfo || null);
+    //  request.input("Ref_Type_Price", sql.NVarChar, req.query.refTypePrice || null);
     //  request.input("Market_Input_Id", sql.NVarChar, req.query.marketInputId || null);
     //  request.input("Quantity_Id", sql.NVarChar, req.query.quantityId || null);
     //  request.input("Price_Id", sql.NVarChar, req.query.priceId || null);
