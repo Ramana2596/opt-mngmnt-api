@@ -2,45 +2,38 @@
 
 const express = require("express");
 const sql = require("mssql");
-const dbConfig = require("../dbConfig");
 const router = express.Router();
 
-sql.connect(dbConfig).then(() => {
-  router.get("/getOpsPlanQuery", async (req, res) => {
-    try {
-      const request = new sql.Request();
+// Route: POST /api/getOpsPlanQuery
+router.post("/getOpsPlanQuery", async (req, res) => {
+  try {
+    const request = new sql.Request();
 
-      // Normalize Production_Month to yyyy-mm-dd (no timestamp)
-      let prodMonth = null;
-      if (req.query.productionMonth) {
-        prodMonth = new Date(req.query.productionMonth).toISOString().split("T")[0];
-      }
-
-      // Map camelCase query params to PascalCase SQL inputs
-      request.input("Game_Id", sql.NVarChar, req.query.gameId || null);
-      request.input("Game_Batch", sql.Int, parseInt(req.query.gameBatch) || null);
-      request.input("Game_Team", sql.NVarChar, req.query.gameTeam || null);
-      request.input("Production_Month", sql.Date, prodMonth);
-      request.input("Operations_Input_Id", sql.NVarChar, req.query.operationsInputId || null);
-      request.input("Part_No", sql.NVarChar, req.query.partNo || null);
-      request.input("Reqd_Qty", sql.SmallInt, parseInt(req.query.reqdQty) || null);
-    //  request.input("Part_Category", sql.NVarChar, req.query.partCategory || null);
-    //  request.input("Ref_Type_Info", sql.NVarChar, req.query.refTypeInfo || null);
-    //  request.input("Ref_Type_Price", sql.NVarChar, req.query.refTypePrice || null);
-    //  request.input("Market_Input_Id", sql.NVarChar, req.query.marketInputId || null);
-    //  request.input("Quantity_Id", sql.NVarChar, req.query.quantityId || null);
-    //  request.input("Price_Id", sql.NVarChar, req.query.priceId || null);
-      request.input("CMD_Line", sql.NVarChar, req.query.cmdLine || null);
-
-      const result = await request.execute("UI_Ops_Business_Plan_Query");
-
-      // Return raw recordset
-      res.json(result.recordset || []);
-    } catch (err) {
-      console.error("Query failed:", err);
-      res.status(500).send("Internal Server Error");
+    // Normalize Production_Month to yyyy-mm-dd (no timestamp)
+    let prodMonth = null;
+    if (req.body.productionMonth) {
+      prodMonth = new Date(req.body.productionMonth).toISOString().split("T")[0];
     }
-  });
+
+    // Map body params directly to SQL inputs
+    request.input("Game_Id", sql.NVarChar, req.body.gameId || "OpsMgt");
+    request.input("Game_Batch", sql.Int, req.body.gameBatch); 
+    request.input("Game_Team", sql.NVarChar, req.body.gameTeam || null);
+    request.input("Production_Month", sql.Date, prodMonth);
+    request.input("Operations_Input_Id", sql.NVarChar, req.body.operationsInputId || null);
+    request.input("Part_No", sql.NVarChar, req.body.partNo || null);
+    request.input("Required_Quantity", sql.SmallInt, req.body.requiredQuantity);
+    request.input("CMD_Line", sql.NVarChar, req.body.cmdLine || null);
+
+    // Execute stored procedure
+    const result = await request.execute("UI_Ops_Business_Plan_Query");
+
+    // Return raw recordset
+    res.json(result.recordset || []);
+  } catch (err) {
+    console.error("Query failed:", err);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;
