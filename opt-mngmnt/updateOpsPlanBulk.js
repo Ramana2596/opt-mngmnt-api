@@ -16,13 +16,17 @@ const router = express.Router();
     // ---- Validate required fields ----
     const { rows, userId } = req.body;
     if (!rows || rows.length === 0) {
-      return res.status(400).json({ ... });
+      return res.status(400).json({ 
+               success: false,
+        returnValue: 1,
+        message: 'No rows to update',
+      });
     }
     if (userId == null) {
       return res.status(400).json({
         success: false,
         returnValue: 1,
-        message: 'Missing userId',
+        message: 'Missing User Id',
       });
     }
 
