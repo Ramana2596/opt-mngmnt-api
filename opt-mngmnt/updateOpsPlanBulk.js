@@ -1,5 +1,4 @@
-// Path: opt-mngmnt/updateOpsPlanBulk.js
-/**
+/*
  * API Name   : updateOpsPlanBulk.js
  * Purpose    : Bulk update Operations Plan using [UI_Ops_Business_Plan_Bulk] SP
  * Input      : rows (array of ops plan rows), userRole 
@@ -8,22 +7,22 @@
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
+// const dbConfig = require('../dbConfig');
 const router = express.Router();
 
-// -----------------------------------------------
-// POST: /updateOpsPlanBulk
-// -----------------------------------------------
-sql.connect(dbConfig).then(() => {
+//sql.connect(dbConfig).then(() => {
   router.post('/updateOpsPlanBulk', async (req, res) => {
 
     // ---- Validate required fields ----
-    const { rows, userRole } = req.body;
+    const { rows, userId } = req.body;
     if (!rows || rows.length === 0) {
+      return res.status(400).json({ ... });
+    }
+    if (userId == null) {
       return res.status(400).json({
         success: false,
         returnValue: 1,
-        message: 'No rows to update',
+        message: 'Missing userId',
       });
     }
 
@@ -64,7 +63,7 @@ sql.connect(dbConfig).then(() => {
 
       // ---- Define SP Input/Output Parameters ----
       request.input('OpsPlanRows', tvp); // TVP input
-      request.input('UserRole', sql.NVarChar(50), userRole || "Team_Leader");
+      request.input('User_Id', sql.Int, Number(userId));
       request.output('Out_Message', sql.NVarChar(200));
 
       // ---- Execute Stored Procedure ----
@@ -94,6 +93,6 @@ sql.connect(dbConfig).then(() => {
     }
 
   });
-});
+//});
 
 module.exports = router;
