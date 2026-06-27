@@ -3,6 +3,7 @@
 
 const express = require("express");
 const sql = require("mssql");
+
 const router = express.Router();
 
 router.get("/getTeamPerf", async (req, res) => {
@@ -14,7 +15,7 @@ router.get("/getTeamPerf", async (req, res) => {
         const gameBatch = parseInt(req.query.gameBatch, 10);
         const gameTeam = req.query.gameTeam;
 
-        // Basic Validation
+        // Validation
         if (!gameId || !gameTeam || Number.isNaN(gameBatch)) {
             return res.status(400).json({
                 success: false,
@@ -30,11 +31,15 @@ router.get("/getTeamPerf", async (req, res) => {
 
         const result = await request.execute("UI_TA_Perf_Query");
 
+        const recordsets = result?.recordsets || [];
+
         res.status(200).json({
             success: true,
-            header: result.recordsets[0][0] || null,
-            yardsticks: result.recordsets[1] || [],
-            ratios: result.recordsets[2] || []
+
+            header: recordsets?.[0]?.[0] || null,
+            yardsticks: recordsets?.[1] || [],
+            ratios: recordsets?.[2] || [],
+            allTeams: recordsets?.[3] || []
         });
 
     }
@@ -44,7 +49,8 @@ router.get("/getTeamPerf", async (req, res) => {
 
         res.status(500).json({
             success: false,
-            message: "Unable to retrieve Team Performance."
+            message: "Unable to retrieve Team Performance.",
+            error: err.message
         });
 
     }
