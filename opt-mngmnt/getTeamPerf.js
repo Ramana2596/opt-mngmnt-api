@@ -33,7 +33,7 @@ router.get("/getTeamPerf", async (req, res) => {
         }
 
         // Validation : Team Dashboard
-        if (!gameId || !gameTeam || Number.isNaN(gameBatch)) {
+        if (!gameId || Number.isNaN(gameBatch)) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid input parameters."
