@@ -36,7 +36,7 @@ router.get("/getTeamPerf", async (req, res) => {
         if (!gameId || Number.isNaN(gameBatch)) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid input parameters."
+                message: "Invalid Parameters."
             });
         }
 
@@ -52,7 +52,16 @@ router.get("/getTeamPerf", async (req, res) => {
         const result = await request.execute("UI_TA_Perf_Query");
 
         const recordsets = result?.recordsets || [];
-
+        
+        // Get all teams for Faculty Dashboard
+  
+        if (!gameTeam) {
+            return res.status(200).json({
+                success: true,
+                allTeams: recordsets[0] || []
+            });
+        }
+        
         res.status(200).json({
             success: true,
             header: recordsets?.[0]?.[0] || null,
