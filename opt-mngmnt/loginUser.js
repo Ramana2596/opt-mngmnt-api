@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/loginUser', async (req, res) => {
     try {
         // Extract login credentials from request body
-        const { email, password } = req.body;
+        const { email, password,cmdLine } = req.body;
 
         // Validate mandatory login inputs
         if (!email || !password) {
@@ -26,7 +26,7 @@ router.post('/loginUser', async (req, res) => {
         // Pass parameters to stored procedure
         request.input('Game_Id', sql.NVarChar, 'OpsMgt');
         request.input('User_Email', sql.NVarChar, email);
-        request.input('CMD_Line', sql.NVarChar, 'Login_User');
+        request.input('CMD_Line', sql.NVarChar, cmdLine);
 
         const result = await request.execute('UI_User_Profile_Query');
 
@@ -56,7 +56,7 @@ router.post('/loginUser', async (req, res) => {
         }
 
  
-        // Delte password from recordset, Once bcrypt.compare matches
+        // Delete password from recordset, Once bcrypt.compare matches
         delete user.Password;
 
         return res.json(result.recordset);
