@@ -28,7 +28,7 @@ router.post('/updateResetSimulation', async (req, res) => {
     request.input('Game_Team', sql.NVarChar(10), gameTeam);
 
     // Execution: Run the stored procedure on the database
-    const result = await request.execute('Sim_Clean_Table');
+    const result = await request.execute('Sim_Clean_Table_Team');
 
     // Response
     const returnValue = result.returnValue ?? 0;
