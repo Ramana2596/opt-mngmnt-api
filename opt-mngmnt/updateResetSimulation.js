@@ -27,6 +27,10 @@ router.post('/updateResetSimulation', async (req, res) => {
     request.input('Game_Batch', sql.Int, Number(gameBatch));
     request.input('Game_Team', sql.NVarChar(10), gameTeam);
 
+  // --- Define Output Parameter ---
+    request.output('SucValue', sql.Int);
+    request.output('Out_Message', sql.NVarChar(200));
+
     // Execution: Run the stored procedure on the database
     const result = await request.execute('Sim_Clean_Table_Team');
 
