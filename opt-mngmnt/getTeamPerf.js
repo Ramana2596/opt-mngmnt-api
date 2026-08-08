@@ -13,12 +13,7 @@ router.get("/getTeamPerf", async (req, res) => {
             : null;
         const gameTeam = req.query.gameTeam || null;
         const cmdLine = req.query.cmdLine;
-console.log("getTeamPerf params:", {
-    gameId,
-    gameBatch,
-    gameTeam,
-    cmdLine,
-});
+
         if (!cmdLine) {
             return res.status(400).json({
                 success: false,
