@@ -28,7 +28,7 @@ router.get("/getTeamPerf", async (req, res) => {
         request.input("Game_Team", sql.NVarChar(10), gameTeam);
         request.input("CMD_Line", sql.NVarChar(50), cmdLine);
 
-        const result = await request.execute("UI_TA_Perf_Query");
+        const result = await request.execute("UI_TA_Batch_Evaluation_Info");
         
 // Pass the result to correct recordset name
         switch (cmdLine) {
@@ -62,7 +62,7 @@ router.get("/getTeamPerf", async (req, res) => {
 
     } catch (err) {
 
-        console.error("UI_TA_Perf_Query Error:", err);
+        console.error("Batch Evaluation Info Error:", err);
 
         res.status(500).json({
             success: false,
