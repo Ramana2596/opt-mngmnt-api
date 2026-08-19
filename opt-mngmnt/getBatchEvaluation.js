@@ -1,10 +1,10 @@
-// File : getTeamPerf.js
+// File : getBatchEvaluation.js
 
 const express = require("express");
 const sql = require("mssql");
 const router = express.Router();
 
-router.get("/getTeamPerf", async (req, res) => {
+router.get("/getBatchEvaluation", async (req, res) => {
     try {
 
         const gameId = req.query.gameId || null;
