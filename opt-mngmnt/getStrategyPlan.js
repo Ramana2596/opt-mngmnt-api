@@ -10,15 +10,16 @@ router.get('/getStrategyPlan', async (req, res) => {
     request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch) || null);
     request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
     request.input('CMD_Line', sql.NVarChar, req.query.cmdLine || null);
-
+ 
+    request.output('SucValue', sql.Int);
     request.output('Out_Message', sql.NVarChar(200));
 
     const result = await request.execute('UI_Strategy_Plan_Query');
 
     res.json({
       data: result.recordset || [],
+      SucValue: result.output?.SucValue ?? -1,
       Out_Message: result.output?.Out_Message || null,
-      returnValue: result.returnValue,
     });
   } catch (err) {
     console.error('Query failed:', err);
