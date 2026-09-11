@@ -1,0 +1,38 @@
+const express = require('express');
+const sql = require('mssql');
+const router = express.Router();
+
+// DB connection is already established at app.js level
+// No need to require dbConfig or call sql.connect() here
+
+router.post('/updateStrategyPlan', async (req, res) => {
+  const strategyPlans = req.body;
+
+  try {
+    const results = [];
+
+    for (const plan of strategyPlans) {
+      const request = new sql.Request();
+
+      request.input('Game_Id', sql.NVarChar, plan.gameId);
+      request.input('Game_Batch', sql.SmallInt, plan.gameBatch);
+      request.input('Game_Team', sql.NVarChar, plan.gameTeam);
+      request.input('Strategy_Set_No', sql.SmallInt, plan.strategySetNo);
+      request.input('Strategy_Id', sql.NVarChar, plan.strategyId);
+      request.input('Player_Decision', sql.NVarChar, plan.playerDecision);
+      request.input('Decided_by', sql.NVarChar, plan.decidedBy || 'Faculty');
+      request.input('Decided_On', sql.Date, new Date());
+      request.input('CMD_Line', sql.NVarChar, 'Update_Strategy_Plan');
+
+      const result = await request.execute('UI_Strategy_Plan_Trans');
+      results.push(result.recordset);
+    }
+
+    res.json(results);
+  } catch (err) {
+    console.error('Query failed:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
