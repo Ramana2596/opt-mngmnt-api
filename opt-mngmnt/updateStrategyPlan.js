@@ -3,7 +3,7 @@ const sql = require('mssql');
 const router = express.Router();
 
 // Update Strategy Plan decisions
-router.post('/updateStrategyPlanNew', async (req, res) => {
+router.post('/updateStrategyPlan', async (req, res) => {
   const strategyPlans = req.body;
 
   try {
