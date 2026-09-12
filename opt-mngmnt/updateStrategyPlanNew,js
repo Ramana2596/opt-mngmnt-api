@@ -20,8 +20,8 @@ router.post('/updateStrategyPlan', async (req, res) => {
       request.input('Strategy_Set_No', sql.SmallInt, plan.strategySetNo);
       request.input('Strategy_Id', sql.NVarChar, plan.strategyId);
       request.input('Player_Decision', sql.NVarChar, plan.playerDecision);
-      request.input('Decided_by', sql.NVarChar, plan.decidedBy || 'Team_Leader');
-      request.input('CMD_Line', sql.NVarChar, 'Update_Strategy_Plan');
+      request.input('Decided_by', sql.NVarChar, plan.decidedBy);
+      request.input('CMD_Line', sql.NVarChar, plan.cmdLine );
 
       const result = await request.execute('UI_Strategy_Plan_Trans');
       results.push(result.recordset);
