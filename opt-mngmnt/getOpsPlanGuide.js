@@ -39,6 +39,14 @@ router.get("/getOpsPlanGuide", async (req, res) => {
         request.input("Production_Month", sql.Date, productionMonth);
 
         const result = await request.execute("dbo.UI_Ops_Business_Plan_Guide");
+        
+        console.log("Guide recordsets:", {
+            count: result.recordsets?.length,
+            rowsPerSet: result.recordsets?.map((set) => set.length),
+            columnsPerSet: result.recordsets?.map((set) =>
+                set.length ? Object.keys(set[0]) : []
+            )
+        });
 
         // Return all five result sets without losing their boundaries.
         return res.json({
