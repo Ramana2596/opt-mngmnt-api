@@ -40,6 +40,14 @@ router.get("/getOpsPlanGuide", async (req, res) => {
 
         const result = await request.execute("dbo.UI_Ops_Business_Plan_Guide");
         
+        // TEMP: check what this API connection can see
+        const dbg = await new sql.Request().query(`
+            SELECT DB_NAME() AS db, SUSER_NAME() AS login_name,
+                    (SELECT COUNT(*) FROM Plant_Capacity
+                    WHERE Game_Id = 'OpsMgt' AND Game_Batch = 101 AND Game_Team = 'Lotus') AS plant_rows
+            `);
+            console.log("Guide debug:", dbg.recordset[0]);
+
         console.log("Guide recordsets:", {
             count: result.recordsets?.length,
             rowsPerSet: result.recordsets?.map((set) => set.length),
