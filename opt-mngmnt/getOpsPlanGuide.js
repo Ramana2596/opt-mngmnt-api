@@ -1,7 +1,6 @@
 
 // File: getOpsPlanGuide.js
-// Purpose: Return TeamPlan guide figures from five stored-procedure result sets.
-// AI Tags: team-plan, guide, stored-procedure, api
+// Purpose: Return TeamPlan guide figures from SP - Six result sets.
 
 const express = require("express");
 const sql = require("mssql");
@@ -40,30 +39,15 @@ router.get("/getOpsPlanGuide", async (req, res) => {
 
         const result = await request.execute("dbo.UI_Ops_Business_Plan_Guide");
         
-        // TEMP: check what this API connection can see
-        const dbg = await new sql.Request().query(`
-            SELECT DB_NAME() AS db, SUSER_NAME() AS login_name,
-                    (SELECT COUNT(*) FROM Plant_Capacity
-                    WHERE Game_Id = 'OpsMgt' AND Game_Batch = 101 AND Game_Team = 'Lotus') AS plant_rows
-            `);
-            console.log("Guide debug:", dbg.recordset[0]);
-
-        console.log("Guide recordsets:", {
-            count: result.recordsets?.length,
-            rowsPerSet: result.recordsets?.map((set) => set.length),
-            columnsPerSet: result.recordsets?.map((set) =>
-                set.length ? Object.keys(set[0]) : []
-            )
-        });
-
-        // Return all five result sets without losing their boundaries.
+         // Return Six result sets.
         return res.json({
             success: true,
             demand: result.recordsets?.[0] || [],
             fgStock: result.recordsets?.[1] || [],
             rmStock: result.recordsets?.[2] || [],
             bom: result.recordsets?.[3] || [],
-            plant: result.recordsets?.[4] || []
+            plant: result.recordsets?.[4] || [],
+            workCentre: result.recordsets?.[5] || []
         });
 
     } catch (err) {
