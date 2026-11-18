@@ -1,29 +1,44 @@
-// Updated for correct data types format for parameters,
-// to eliminate error in data conversion
+// ============================================================
+// API Name : getAcReceivable
+// Purpose  : Fetch Account Receivable
+// ============================================================
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../../dbConfig');
 const router = express.Router();
 
+// Route: Handle GET request
+router.get('/getAcReceivable', async (req, res) => {
+  try {
+    // Extract parameters from query string
+    const { gameId, gameBatch, gameTeam } = req.query;
 
-sql.connect(dbConfig).then(() => {
-  router.get('/getAcReceivable', async (req, res) => {
-    try {
-        const request = new sql.Request();
+    // Validate mandatory parameters
+    if (!gameId || !gameBatch || !gameTeam) {
+      return res.status(400).send('Missing Parameters !');
+    }
 
-        // Add parameters
-        request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
-        request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch) || null);
-        request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
+    // Validate data type
+    if (!Number.isInteger(Number(gameBatch))) {
+      return res.status(400).send('Batch must be an integer !');
+    }
 
-        const result = await request.execute('UI_Ac_Receivable');
+    // Create request and map parameters (SP vs frontend)
+    const request = new sql.Request();
+    request.input('Game_Id', sql.NVarChar, String(gameId));
+    request.input('Game_Batch', sql.Int, Number(gameBatch));
+    request.input('Game_Team', sql.NVarChar, String(gameTeam));
 
-        res.json(result.recordset);
-    } catch (err) {
-      console.error('Query failed:', err);
-      res.status(500).send('Internal Server Error');
-    }   });
+    // Execute stored procedure
+    const result = await request.execute('UI_Ac_Receivable');
+
+    // Return rows
+    res.json(result.recordset);
+
+  } catch (err) {
+    // DB / system error
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 module.exports = router;
