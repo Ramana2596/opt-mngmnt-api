@@ -1,26 +1,39 @@
+// getClassRoomSession.js
+// Purpose: Get Class Room Session information of a Team
 
-// Updated for correct data types format
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
 const router = express.Router();
 
-sql.connect(dbConfig).then(() => {
-  router.get('/getClassRoomSession', async (req, res) => {
-    try {
-      const request = new sql.Request();
 
-      // Add parameters
-      request.input('Game_Id', sql.NVarChar(20), req.query.gameId || null);
-      request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch) || null);
+router.get('/getClassRoomSession', async (req, res) => {
+  try {
 
-      const result = await request.execute('dbo.UI_Class_Room_Session');
-      res.json(result.recordset);
-    } catch (err) {
-      console.error('Query failed:', err);
-      res.status(500).send('Internal Server Error');
+    const { gameId, gameBatch} = req.query;
+
+    // Check if parameters exist
+    if (!gameId || !gameBatch ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing parameter !.'
+      });
     }
-  });
+    
+    const request = new sql.Request();
+
+    // pass parameters to stored procedure
+    request.input('Game_Id', sql.NVarChar(20), req.query.gameId || null);
+    request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch) || null);
+
+    // Execute the stored procedure and return the result
+    const result = await request.execute('dbo.UI_Class_Room_Session');
+    res.json(result.recordset);
+
+  } catch (err) {
+    // Catch error at API call level and log to console
+    console.error('Query failed:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 module.exports = router;
