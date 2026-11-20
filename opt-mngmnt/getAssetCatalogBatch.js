@@ -9,34 +9,41 @@ router.get('/getAssetCatalogBatch', async (req, res) => {
     try {
         const { gameId, gameBatch, cmdLine } = req.query;
 
-        // 1. Check if all parameters exist
-        if (!gameId || !gameBatch || !cmdLine) {
+        // Check if parameters exist
+        if (!gameId || !cmdLine) {
             return res.status(400).json({
                 success: false,
                 message: 'Missing parameter !.'
             });
         }
 
-        // 2. Datatype check: ensure gameBatch is a valid integer
-        const parsedGameBatch = parseInt(gameBatch, 10);
-        if (isNaN(parsedGameBatch)) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Batch must be a valid integer.' 
-            });
+        // Asset_Catalog needs a batch; Get_Batch (dropdown list) does not
+        if (cmdLine === 'Asset_Catalog' && !gameBatch) {
+            return res.status(400).json(
+                { success: false, message: 'Batch is required for Asset_Catalog.' });
         }
 
-        const request = new sql.Request();
+        // Validate Batch as an integer 
+        let parsedGameBatch = null;
+        if (gameBatch) {
+            parsedGameBatch = Number(gameBatch);
+            if (!Number.isInteger(parsedGameBatch)) {
+                return res.status(400).json({
+                    success: false, 
+                    message: 'Batch must be a valid integer.'
+                });
+            }
+        }
 
         // Pass parameters to the stored procedure
+        const request = new sql.Request();
+
         request.input('Game_Id', sql.NVarChar, gameId);
         request.input('Game_Batch', sql.Int, parsedGameBatch);
         request.input('CMD_Line', sql.NVarChar, cmdLine);
 
-        // Execute the stored procedure
+        // Execute the stored procedure and return the result
         const result = await request.execute('UI_Asset_Catalog_Batch');
-
-        // Return recordset for front-end consumption
         return res.status(200).json(result.recordset);
 
     } catch (err) {
