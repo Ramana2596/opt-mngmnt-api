@@ -9,7 +9,7 @@ router.get('/AssetCatalog', async (req, res) => {
     try {
         const { gameId, gameBatch, gameTeam } = req.query;
 
-        // 1. Check if all parameters exist
+        // Check if all parameters exist
         if (!gameId || !gameBatch || !gameTeam) {
             return res.status(400).json({
                 success: false,
@@ -17,7 +17,7 @@ router.get('/AssetCatalog', async (req, res) => {
             });
         }
 
-        // 2. Datatype check: ensure gameBatch is a valid integer
+        // Datatype check: valid integer
         const parsedGameBatch = parseInt(gameBatch, 10);
         if (isNaN(parsedGameBatch)) {
             return res.status(400).json({ 
