@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/getChartInfo', async (req, res) => {
     try {
 
-    const { gameId, gameBatch, gameTeam } = req.query;
+    const { gameId, gameBatch, gameTeam, cmdLine} = req.query;
 
     // Check if parameters exist
     if (!gameId || !gameBatch || !gameTeam || !cmdLine) {
