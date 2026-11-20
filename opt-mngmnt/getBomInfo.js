@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get('/getBomInfo', async (req, res) => {
     try {
-        const { gameId, gameBatch, cmdLine } = req.query;
+        const { gameId, gameBatch, gameTeam } = req.query;
 
         // Check if parameters exist
         if (!gameId ) {
