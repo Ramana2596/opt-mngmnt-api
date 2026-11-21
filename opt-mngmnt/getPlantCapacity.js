@@ -7,6 +7,16 @@ const router = express.Router();
 // Route: GET /getPlantCapacity
 router.get('/getPlantCapacity', async (req, res) => {
   try {
+    const { gameId, gameBatch, gameTeam } = req.query;
+
+    // Check if parameters exist
+    if (!gameId || !gameBatch || !gameTeam) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing parameter !.'
+      });
+    }
+
     const request = new sql.Request();
 
     // Parameters (typed correctly)
