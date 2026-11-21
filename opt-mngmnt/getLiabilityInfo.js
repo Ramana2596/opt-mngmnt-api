@@ -8,10 +8,10 @@ const router = express.Router();
 
 router.get('/getLiabilityInfo', async (req, res) => {
   try {
-    const { gameId, gameBatch, gameTeam, cmdLine } = req.query;
+    const { gameId, gameBatch, gameTeam } = req.query;
 
     // Check if parameters exist
-    if (!gameId || !gameBatch || !gameTeam || !cmdLine) {
+    if (!gameId || !gameBatch || !gameTeam) {
       return res.status(400).json({
         success: false,
         message: 'Missing parameter !.'
