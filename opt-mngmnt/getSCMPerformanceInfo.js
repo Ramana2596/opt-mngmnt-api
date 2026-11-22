@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/getSCMPerformanceInfo', async (req, res) => {
     try {
-        const { gameId, gameBatch, gameTeam } = req.body.params || {};
+        const { gameId, gameBatch, gameTeam } = req.query;
 
         // Validate mandatory parameters
         if (!gameId || !gameBatch || !gameTeam) {
@@ -18,12 +18,24 @@ router.get('/getSCMPerformanceInfo', async (req, res) => {
                 message: "Missing Parameter",
             });
         }
+
+        // Validate Game_Batch
+        const batch = parseInt(gameBatch, 10);
+
+        if (!Number.isInteger(batch)) {
+            return res.status(400).json({
+                success: false,
+                code: -1,
+                message: "Invalid!. Batch must be an integer",
+            });
+        }``
+
         const request = new sql.Request();
 
         // pass parameters to stored procedure
-        request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
-        request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch || null));
-        request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
+        request.input('Game_Id', sql.NVarChar, gameId);
+        request.input('Game_Batch', sql.Int, batch);
+        request.input('Game_Team', sql.NVarChar, gameTeam);
 
         //
         const result = await request.execute('UI_SCM_Performance_Info');
