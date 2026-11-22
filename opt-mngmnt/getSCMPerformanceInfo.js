@@ -1,30 +1,39 @@
-// Updated for correct data types format for parameters
-// to eliminate error in data conversion
+// getSCMPerformanceInfo.js
+// Purpose: Fetch SCM performance information of a team
+// Uses API format template - dbconfig at App Level, check parameter & its data type, response  
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
 const router = express.Router();
 
+router.get('/getSCMPerformanceInfo', async (req, res) => {
+    try {
+        const { gameId, gameBatch, gameTeam } = req.body.params || {};
 
-sql.connect(dbConfig).then(() => {
-    router.get('/getSCMPerformanceInfo', async (req, res) => {
-        try {
+        // Validate mandatory parameters
+        if (!gameId || !gameBatch || !gameTeam) {
+            return res.status(400).json({
+                success: false,
+                code: -1,
+                message: "Missing Parameter",
+            });
+        }
+        const request = new sql.Request();
 
-            const request = new sql.Request();
+        // pass parameters to stored procedure
+        request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
+        request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch || null));
+        request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
 
-            // Use correct data types based on SQL Server stored procedure
-            request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
-            request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch || null));
-            request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
+        //
+        const result = await request.execute('UI_SCM_Performance_Info');
+        res.json(result.recordset);
 
-            const result = await request.execute('UI_SCM_Performance_Info');
-
-            res.json(result.recordset);
-        } catch (err) {
-            console.error('Query failed:', err);
-            res.status(500).send('Internal Server Error');
-        }   });
+    } catch (err) {
+        // Catch error at API call level and log to console
+        console.error('Query failed:', err);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;
