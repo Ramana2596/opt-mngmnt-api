@@ -1,16 +1,14 @@
 // getCostNormInfo.js
 // Purpose: Fetches cost norm information.
-// Uses API format template - dbconfig at App Level, check parameter & its data type, response
-// Updated: Parameterised query, validating data types
+// Std API format - dbconfig at App Level, check parameter & its data type, response
 
 const express = require('express');
 const sql = require('mssql');
 const router = express.Router();
 
-
 router.get('/getCostNormInfo', async (req, res) => {
     try {
-        const { gameId, gameBatch, gameTeam, cmdLine } = req.query;
+        const { gameId } = req.query;
 
         // Check if parameters exist
         if (!gameId) {
