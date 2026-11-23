@@ -27,7 +27,7 @@ router.get('/getStdMarketInput', async (req, res) => {
     // Map parameters and datatypes: SP vs frontend (length = SP length)
     request.input('Game_Id', sql.NVarChar(20), gameId);
     request.input('Game_Batch', sql.Int, Number(gameBatch));
-    request.input('CMD_Line', sql.NVarChar(100), cmdLine);
+    request.input('CMD_Line', sql.NVarChar(50), cmdLine);
 
     // Declare OUTPUT only if the SP has them
     request.output('SucValue', sql.Int);
