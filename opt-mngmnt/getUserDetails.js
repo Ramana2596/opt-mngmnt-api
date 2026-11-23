@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/getUserDetails', async (req, res) => {
   try {
 
-    const { gameId = 'OpsMgt', userEmail } = req.query;
+    const { gameId, userEmail } = req.query;
 
     // Validate mandatory parameters (userEmail is optional here)
     if (!gameId) {
