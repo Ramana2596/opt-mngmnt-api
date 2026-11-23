@@ -1,49 +1,52 @@
+// getStdMarketInput.js
+// Purpose: To fetch standard market input data for a batch
+// Std API Format: GET, uses SP ; @SucValue and @Out_Message)
+
+
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
-
 const router = express.Router();
 
 router.get('/getStdMarketInput', async (req, res) => {
   try {
-    await sql.connect(dbConfig);
-    const request = new sql.Request();
+    // Extract parameters from query string
+    const { gameId, gameBatch, gameTeam, cmdLine } = req.query || {};
 
-    request.input('Game_Id', sql.NVarChar, req.query.gameId);
-    request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch));
-    request.output('OutMessage', sql.NVarChar, req.query.outMessage);  // output parameter for message
-    request.input('CMD_Line', sql.NVarChar, req.query.cmdLine);
-
-    const result = await request.execute('UI_Std_Market_Input');
-
-    const message = result.output.OutMessage || "";
-
-    // If data is returned (rows), send with message
-    const data = result.recordsets[0] || [];
-
-    // If no data, maybe failure or no records condition
-    if (data.length === 0 && message) {
-      return res.json({
-        success: false,
-        message,
-        data: []
-      });
+    // Validate mandatory parameters
+    if (!gameId || !gameBatch || !gameTeam) {
+      return res.status(400).send('Missing Parameter');
     }
 
-    // Otherwise success response with data & message
-    res.json({
-      success: true,
-      message,
-      data
-    });
+    // Validate parameter type
+    if (!Number.isInteger(Number(gameBatch))) {
+      return res.status(400).send('Batch must be integer');
+    }
+
+    const request = new sql.Request();   // new per call
+
+    // Map parameters and datatypes: SP vs frontend (length = SP length)
+    request.input('Game_Id', sql.NVarChar(20), gameId);
+    request.input('Game_Batch', sql.Int, Number(gameBatch));
+    request.input('CMD_Line', sql.NVarChar(100), cmdLine);
+
+    // Declare OUTPUT only if the SP has them
+    request.output('SucValue', sql.Int);
+    request.output('Out_Message', sql.NVarChar(100));
+
+    // Execute stored procedure
+    const result = await request.execute('UI_Std_Market_Input');
+
+    // Status comes from the SP
+    const sucValue = result.output.SucValue ?? 0;
+    const message  = result.output.Out_Message ?? '';
+    const data     = result.recordset || [];
+
+    return res.json({ success: sucValue === 0, sucValue, message, data });
 
   } catch (err) {
-    console.error('SQL Error:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: err.message
-    });
+    // Catch error at API call level and log to console
+    console.error('getStdMarketInput failed:', err);
+    return res.status(500).send('Internal Server Error');
   }
 });
 
