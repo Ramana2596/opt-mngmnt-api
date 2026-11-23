@@ -7,18 +7,18 @@ const router = express.Router();
 
 
 // Route: Handle POST request 
-router.post('/getOpsDemandCreationInfo', async (req, res) => {
+router.get('/getOpsDemandCreationInfo', async (req, res) => {
   try {
     // Extract parameters from payload
-    const { gameId, gameBatch, gameTeam } = req.body.params || {};
+    const { gameId, gameBatch, gameTeam } = req.query || {};
 
     // Validate mandatory parameters
     if (!gameId || !gameBatch || !gameTeam) {
-      return res.status(400).json({
-        success: false,
-        code: -1,
-        message: "Missing Parameter",
-      });
+      return res.status(400).send('Missing Parameter');
+    }
+    // Validate parameter type
+    if (!Number.isInteger(Number(gameBatch))) {
+      return res.status(400).send('Batch must be integer');
     }
 
     // Create request 
@@ -31,19 +31,12 @@ router.post('/getOpsDemandCreationInfo', async (req, res) => {
 
     // Execute stored procedure
     const result = await request.execute('UI_Ops_Demand_Creation_Info');
-
-    // Extract SP return values
-    const code = result.returnValue ?? 0;
-    const message = result?.output?.Out_Message ?? '';
-    const data = result.recordset || [];
-
-    // Successful execution response
-    res.json({ success: true, code, message, data });
+    res.json(result.recordset || []);
 
   } catch (err) {
-    // DB / system error during SP execution
+    // Catch error at API call level and log to console
     console.error('SQL Error:', err);
-    res.status(500).json({ success: false, code: -1, message: err.message });
+    res.status(500).send('Internal Server Error');
   }
 });
 
