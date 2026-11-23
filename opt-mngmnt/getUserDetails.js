@@ -8,7 +8,8 @@ const router = express.Router();
 
 router.get('/getUserDetails', async (req, res) => {
   try {
-    const { gameId, userEmail } = req.query;
+
+    const { gameId = 'OpsMgt', userEmail } = req.query;
 
     // Validate mandatory parameters (userEmail is optional here)
     if (!gameId) {
@@ -18,7 +19,7 @@ router.get('/getUserDetails', async (req, res) => {
     const request = new sql.Request();
 
    // Map parameters and datatypes: SP vs frontend (length = SP length)
-    request.input('Game_Id', sql.NVarChar(20), gameId || 'OpsMgt');
+    request.input('Game_Id', sql.NVarChar(20), gameId);
     request.input('User_login', sql.NVarChar(50), userEmail || null);
 
     // Declare OUTPUT only if the SP has them
