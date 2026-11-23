@@ -1,39 +1,40 @@
 // getShopPerformanceInfo.js
-// Purpose: retrieve shop performance information
-// Uses API format template - dbconfig at App Level, check parameter & its data type, response
+// Purpose: retrieve shop performance information (FETCH only)
+// Uses API format template - dbconfig at App Level, check parameters, data Types, response
 
 const express = require('express');
 const sql = require('mssql');
 const router = express.Router();
 
-
 router.get('/getShopPerformanceInfo', async (req, res) => {
     try {
-        // Extract parameters from payload
+        // Extract parameters from query string
         const { gameId, gameBatch, gameTeam } = req.query || {};
 
         // Validate mandatory parameters
         if (!gameId || !gameBatch || !gameTeam) {
-            return res.status(400).json({
-                success: false,
-                code: -1,
-                message: "Missing Parameter",
-            });
+            return res.status(400).send('Missing Parameter');
         }
 
+        // Validate parameter type
+        if (!Number.isInteger(Number(gameBatch))) {
+            return res.status(400).send('Batch must be integer');
+        }
+
+        // Create request (new per call, never shared between users)
         const request = new sql.Request();
 
-        // parameter validation and type checking
-        request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
-        request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch || null));
-        request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null);
+        // Map parameters and datatypes: SP vs frontend
+        request.input('Game_Id', sql.NVarChar(20), gameId);
+        request.input('Game_Batch', sql.Int, Number(gameBatch));
+        request.input('Game_Team', sql.NVarChar(10), gameTeam);
 
-        // Execute the stored procedure and return the result
+        // Execute the stored procedure and return the rows
         const result = await request.execute('UI_Shop_Performance_Info');
-        res.json(result.recordset);
+        res.json(result.recordset || []);
 
     } catch (err) {
-        // Log the error and send a 500 response
+        // Catch error at API call level and log to console
         console.error('Query failed:', err);
         res.status(500).send('Internal Server Error');
     }
