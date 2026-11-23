@@ -31,7 +31,7 @@ router.get('/getStdMarketInput', async (req, res) => {
 
     // Declare OUTPUT only if the SP has them
     request.output('SucValue', sql.Int);
-    request.output('Out_Message', sql.NVarChar(100));
+    request.output('Out_Message', sql.NVarChar(200));
 
     // Execute stored procedure
     const result = await request.execute('UI_Std_Market_Input');
