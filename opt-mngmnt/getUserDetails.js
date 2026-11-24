@@ -1,5 +1,5 @@
 // getUserDetails.js
-// Purpose: Fetches cost norm information.
+// Purpose: Fetches user information.
 // API Format template - dbconfig at App Level, check parameter & its data type, response
 
 const express = require('express');
