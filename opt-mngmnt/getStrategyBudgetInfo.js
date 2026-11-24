@@ -1,50 +1,42 @@
-/*
-const express = require('express');
-const sql = require('mssql');
-const dbConfig = require('../dbConfig');
-const router = express.Router();
-
-sql.connect(dbConfig).then(() => {
-    router.get('/getStrategyBudgetInfo', async (req, res) => {
-        try {
-            const result = await sql.query(`
-   EXEC [dbo].[UI_Strategy_Budget_Info]
-        @Game_Id = '${req.query.gameId}',
-        @Game_Batch = ${req.query.gameBatch},
-        @Game_Team = '${req.query.gameTeam}'`);
-            res.json(result.recordset);
-        } catch (err) {
-            console.error('Query failed:', err);
-            res.status(500).send('Internal Server Error');
-        }
-    });
-});
-
-module.exports = router;
-*/
-
-// Updated for correct data types format for parameters
-// to eliminate error in data conversion
+// file getStrategyBudgetInfo.js
+// Purpose: Fetch Budget for implementing Strategy of a team
+// Std API Format - dbConfig, Parameter & dataType check, response
 
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
 const router = express.Router();
-sql.connect(dbConfig).then(() => {
-  router.get('/getStrategyBudgetInfo', async (req, res) => {
+
+router.get('/getStrategyBudgetInfo', async (req, res) => {
     try {
-        const request = new sql.Request();
-        // Add parameters
-        request.input('Game_Id', sql.NVarChar(20), req.query.gameId || null);
-        request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch) || null);
-        request.input('Game_Team', sql.NVarChar(20), req.query.gameTeam || null);
 
+        const { gameId, gameBatch, gameTeam } = req.query;
+
+        // Validate mandatory parameters
+        if (!gameId || !gameBatch || !gameTeam) {
+            return res.status(400).send('Missing Parameter');
+        }
+
+        // Validate parameter type
+        if (!Number.isInteger(Number(gameBatch))) {
+            return res.status(400).send('Batch must be integer');
+        }
+
+        const request = new sql.Request();
+
+        // Map parameters and datatypes: SP vs frontend
+        request.input('Game_Id', sql.NVarChar(20), gameId);
+        request.input('Game_Batch', sql.Int, gameBatch);
+        request.input('Game_Team', sql.NVarChar(20), gameTeam);
+
+        //  Execute stored procedure and return response
         const result = await request.execute('dbo.UI_Strategy_Budget_Info');
         res.json(result.recordset);
+
     } catch (err) {
-      console.error('Query failed:', err);
-      res.status(500).send('Internal Server Error');
-    }   });
+        // Catch error at API call level and log to console
+        console.error('Query failed:', err);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;
