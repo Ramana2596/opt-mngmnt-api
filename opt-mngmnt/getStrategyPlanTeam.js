@@ -1,11 +1,12 @@
 // getStrategyPlanTeam.js
 // Purpose: Fetch Strategy Plan of a Team
+// Std API Format - dbConfig, Parament & datatype check, response
 
 const express = require('express');
 const sql = require('mssql');
 const router = express.Router();
 
-// Route: Handle POST request for Balance Sheet Key Result Info
+// Route: 
 router.get('/getStrategyPlanTeam', async (req, res) => {
   try {
     const { gameId, gameBatch, gameTeam } = req.query;
