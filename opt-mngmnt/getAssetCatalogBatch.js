@@ -10,13 +10,23 @@ router.get('/getAssetCatalogBatch', async (req, res) => {
         const { gameId, gameBatch, cmdLine } = req.query;
 
         // Check if parameters exist
-        if (!gameId || !gameBatch || !cmdLine) {
+        if (!gameId || !cmdLine) {
             return res.status(400).send('Missing Parameter');
         }
 
-        // Validate parameter type
-        if (!Number.isInteger(Number(gameBatch))) {
-            return res.status(400).send('Batch must be integer');
+        if (!['Get_Batch', 'Asset_Catalog'].includes(cmdLine)) {
+            return res.status(400).send('Invalid CMD_Line');
+        }
+
+        // Validate batch only for Asset_Catalog
+        if (cmdLine === 'Asset_Catalog') {
+            if (!gameBatch) {
+                return res.status(400).send('Missing Game Batch');
+            }
+
+            if (!Number.isInteger(Number(gameBatch))) {
+                return res.status(400).send('Batch must be integer');
+            }
         }
 
         // Pass parameters to the stored procedure
