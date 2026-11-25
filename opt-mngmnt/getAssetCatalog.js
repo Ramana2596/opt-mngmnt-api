@@ -1,53 +1,55 @@
-// File AssetCatalog
-// Purpose : Fetch Asset Catalog Data
+
+// File : getAssetCatalog.js
+// Purpose : Fetch Asset Catalog Batch Data
 
 const express = require('express');
 const sql = require('mssql');
 const router = express.Router();
 
-router.get('/AssetCatalog', async (req, res) => {
+router.get('/getAssetCatalog', async (req, res) => {
     try {
-        const { gameId, gameBatch, gameTeam } = req.query;
+        const { gameId, gameBatch, cmdLine } = req.query;
 
-        // Check if all parameters exist
-        if (!gameId || !gameBatch || !gameTeam) {
-            return res.status(400).json({
-                success: false,
-                message: 'Missing parameter !.'
-            });
+        // Check if parameters exist
+        if (!gameId || !cmdLine) {
+            return res.status(400).send('Missing Parameter');
         }
 
-        // Datatype check: valid integer
-        const parsedGameBatch = parseInt(gameBatch, 10);
-        if (isNaN(parsedGameBatch)) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Batch must be a valid integer.' 
-            });
+        if (!['Get_Batch', 'Asset_Catalog'].includes(cmdLine)) {
+            return res.status(400).send('Invalid CMD_Line');
         }
 
-        const request = new sql.Request();
+        // Validate batch only for Asset_Catalog
+        if (cmdLine === 'Asset_Catalog') {
+            if (!gameBatch) {
+                return res.status(400).send('Missing Game Batch');
+            }
+
+            if (!Number.isInteger(Number(gameBatch))) {
+                return res.status(400).send('Batch must be integer');
+            }
+        }
 
         // Pass parameters to the stored procedure
-        request.input('Game_Id', sql.NVarChar, gameId);
-        request.input('Game_Batch', sql.Int, parsedGameBatch);
-        request.input('Game_Team', sql.NVarChar, gameTeam);
+        const request = new sql.Request();
 
-        // Execute the stored procedure
-        const result = await request.execute('UI_Asset_Catalog');
+        // Map parameters and datatypes: SP vs frontend
+        request.input('Game_Id', sql.NVarChar(20), gameId);
+        request.input(
+            'Game_Batch',
+            sql.Int,
+            cmdLine === 'Get_Batch' ? null : Number(gameBatch)
+        );
+        request.input('CMD_Line', sql.NVarChar, cmdLine);
 
-        // Return recordset for front-end consumption
-        return res.status(200).json(result.recordset);
+        // Execute the stored procedure and return the result
+        const result = await request.execute('UI_Asset_Catalog_Info');
+        return res.status(200).json(result.recordset || []);
 
     } catch (err) {
         // Catch error at API call level and log to console
-        console.error('API Error [GET /AssetCatalog]:', err);
-        
-        return res.status(500).json({ 
-            success: false, 
-            message: 'Internal Server Error', 
-            error: err.message 
-        });
+        console.error('API Error [GET /getAssetCatalog]:', err);
+        return res.status(500).send('Internal Server Error');
     }
 });
 
