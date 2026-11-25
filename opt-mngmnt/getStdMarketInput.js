@@ -10,10 +10,10 @@ const router = express.Router();
 router.get('/getStdMarketInput', async (req, res) => {
   try {
     // Extract parameters from query string
-    const { gameId, gameBatch, gameTeam, cmdLine } = req.query || {};
+    const { gameId, gameBatch, cmdLine } = req.query || {};
 
     // Validate mandatory parameters
-    if (!gameId || !gameBatch || !gameTeam) {
+    if (!gameId || !gameBatch || !cmdLine) {
       return res.status(400).send('Missing Parameter');
     }
 
@@ -37,9 +37,12 @@ router.get('/getStdMarketInput', async (req, res) => {
     const result = await request.execute('UI_Std_Market_Input');
 
     // Status comes from the SP
-    const sucValue = result.output.SucValue ?? 0;
-    const message  = result.output.Out_Message ?? '';
-    const data     = result.recordset || [];
+    const sucValue = result.output.SucValue;
+    const message = result.output.Out_Message ?? '';
+    const data = result.recordset || [];
+
+    // Validate SP execution status
+    if (sucValue == null) throw new Error('SP did not return SucValue');
 
     return res.json({ success: sucValue === 0, sucValue, message, data });
 
