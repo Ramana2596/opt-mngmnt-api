@@ -46,7 +46,5 @@ router.get('/getAssetCatalogBatch', async (req, res) => {
         console.error('API Error [GET /getAssetCatalogBatch]:', err);
         return res.status(500).send('Internal Server Error');
     });
-    }
-});
 
 module.exports = router;
