@@ -10,51 +10,32 @@ router.get('/getAssetCatalogBatch', async (req, res) => {
         const { gameId, gameBatch, cmdLine } = req.query;
 
         // Check if parameters exist
-        if (!gameId || !cmdLine) {
-            return res.status(400).json({
-                success: false,
-                message: 'Missing parameter !.'
-            });
+        if (!gameId || !gameBatch || !cmdLine) {
+            return res.status(400).send('Missing Parameter');
         }
 
-        // Asset_Catalog needs a batch; Get_Batch (dropdown list) does not
-        if (cmdLine === 'Asset_Catalog' && !gameBatch) {
-            return res.status(400).json(
-                { success: false, message: 'Batch is required for Asset_Catalog.' });
-        }
-
-        // Validate Batch as an integer 
-        let parsedGameBatch = null;
-        if (gameBatch) {
-            parsedGameBatch = Number(gameBatch);
-            if (!Number.isInteger(parsedGameBatch)) {
-                return res.status(400).json({
-                    success: false, 
-                    message: 'Batch must be a valid integer.'
-                });
-            }
+        // Validate parameter type
+        if (!Number.isInteger(Number(gameBatch))) {
+            return res.status(400).send('Batch must be integer');
         }
 
         // Pass parameters to the stored procedure
         const request = new sql.Request();
 
-        request.input('Game_Id', sql.NVarChar, gameId);
-        request.input('Game_Batch', sql.Int, parsedGameBatch);
-        request.input('CMD_Line', sql.NVarChar, cmdLine);
+        // Map parameters and datatypes: SP vs frontend (length = SP length)
+        request.input('Game_Id', sql.NVarChar(20), gameId);
+        request.input('Game_Batch', sql.Int, Number(gameBatch));
+        request.input('CMD_Line', sql.NVarChar(50), cmdLine);
 
         // Execute the stored procedure and return the result
-        const result = await request.execute('UI_Asset_Catalog_Batch');
+        const result = await request.execute('UI_Asset_Catalog_Info');
         return res.status(200).json(result.recordset);
 
     } catch (err) {
         // Catch error at API call level and log to console
         console.error('API Error [GET /getAssetCatalogBatch]:', err);
-        
-        return res.status(500).json({ 
-            success: false, 
-            message: 'Internal Server Error', 
-            error: err.message 
-        });
+        return res.status(500).send('Internal Server Error');
+    });
     }
 });
 
