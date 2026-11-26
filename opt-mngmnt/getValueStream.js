@@ -1,58 +1,36 @@
 // getValueStream.js
-// Purpose: Top-level API route to get value stream from SQL Server
-// Updated: Parameterised query, validating data types
+// Purpose: Fetch Value Stream Master Info
+// API Format template - dbconfig at App Level, check parameter & its data type, response
+
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
 const router = express.Router();
 
-/**
- * GET /api/getValueStream
- * Query param: gameId
- */
 router.get('/getValueStream', async (req, res) => {
   try {
-    // Get a connection from the pool
-    const pool = await sql.connect(dbConfig);
-    const request = pool.request();
+    const { gameId } = req.query;
 
-    // Input parameter (validate type)
-    request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
+    // Validate mandatory parameters (userEmail is optional here)
+    if (!gameId) {
+      return res.status(400).send('Missing Parameter');
+    }
 
-    // Execute stored procedure
+    const request = new sql.Request();
+
+    // Map parameters and datatypes: SP vs frontend
+    request.input('Game_Id', sql.NVarChar, gameId);
+
+    // Execute stored procedure and get response
     const result = await request.execute('UI_Value_Stream');
+    res.json(result.recordset);
 
-    // Send result to frontend
-    res.json(result.recordset || []);
   } catch (err) {
+    // Catch error at API call level and log to console
     console.error('Query failed:', err);
     res.status(500).send('Internal Server Error');
   }
+
 });
 
 module.exports = router;
 
-/*
-const express = require('express');
-const sql = require('mssql');
-const dbConfig = require('../dbConfig');
-const router = express.Router();
-
-sql.connect(dbConfig).then(() => {
-    router.get('/getValueStream', async (req, res) => {
-        try {
-            const request = new sql.Request();
-
-            // Add Parameters, validating Data types as in SP
-            request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
-
-            const result = await request.execute('UI_Value_Stream');
-
-            res.json(result.recordset);
-        } catch (err) {
-            console.error('Query failed:', err);
-            res.status(500).send('Internal Server Error');
-        }
-    });
-});
-*/
