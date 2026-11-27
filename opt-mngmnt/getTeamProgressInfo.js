@@ -36,10 +36,10 @@ router.get('/getTeamProgressInfo', async (req, res) => {
     // Map Parameters and datatypes SP Vs frontend
     request.input('Game_Id', sql.NVarChar(20), gameId);
     request.input('Game_Batch', sql.Int, Number(gameBatch));
-    request.input('Game_Team', sql.NVarChar(10), gameTeam);
+    request.input('CMD_Line', sql.NVarChar(50), cmdLine);
 
     // Execute stored procedure
-    const result = await request.execute('UI_Strategy_Plan_Team');
+    const result = await request.execute('UI_Team_Progress_Info');
     res.json(result.recordset);
 
   } catch (err) {
