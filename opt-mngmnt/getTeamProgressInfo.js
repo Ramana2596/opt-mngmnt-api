@@ -7,7 +7,7 @@ const sql = require('mssql');
 const router = express.Router();
 
 router.get('/getTeamProgressInfo', async (req, res) => {
-  try {
+    try {
         const { gameId, gameBatch, cmdLine } = req.query;
 
         // Check if parameters exist
@@ -30,23 +30,23 @@ router.get('/getTeamProgressInfo', async (req, res) => {
             }
         }
 
-    // Create request 
-    const request = new sql.Request();
+        // Create request 
+        const request = new sql.Request();
 
-    // Map Parameters and datatypes SP Vs frontend
-    request.input('Game_Id', sql.NVarChar(20), gameId);
-    request.input('Game_Batch', sql.Int, Number(gameBatch));
-    request.input('CMD_Line', sql.NVarChar(50), cmdLine);
+        // Map Parameters and datatypes SP Vs frontend
+        request.input('Game_Id', sql.NVarChar(20), gameId);
+        request.input('Game_Batch', sql.Int, Number(gameBatch));
+        request.input('CMD_Line', sql.NVarChar(50), cmdLine);
 
-    // Execute stored procedure
-    const result = await request.execute('UI_Team_Progress_Info');
-    res.json(result.recordset);
+        // Execute stored procedure
+        const result = await request.execute('UI_Team_Progress_Info');
+        res.json(result.recordset);
 
-  } catch (err) {
-    // Catch error at API call level and log to console
-    console.error('Query failed:', err);
-    res.status(500).send('Internal Server Error');
-  }
+    } catch (err) {
+        // Catch error at API call level and log to console
+        console.error('Query failed:', err);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;
