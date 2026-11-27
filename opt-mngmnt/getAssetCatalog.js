@@ -22,7 +22,7 @@ router.get('/getAssetCatalog', async (req, res) => {
         // Validate batch only for Asset_Catalog
         if (cmdLine === 'Asset_Catalog') {
             if (!gameBatch) {
-                return res.status(400).send('Missing Game Batch');
+                return res.status(400).send('Missing Batch');
             }
 
             if (!Number.isInteger(Number(gameBatch))) {
