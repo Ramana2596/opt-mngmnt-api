@@ -1,5 +1,5 @@
 // file getMarketFactorInfo.js
-// Purpose: Fetch Strategy Plan of a Team
+// Purpose: Fetch Market Information of a Batch
 // Std API Format - dbConfig, Parament & datatype check, response
 
 const express = require('express');
@@ -8,13 +8,25 @@ const router = express.Router();
 
 router.get('/getMarketFactorInfo', async (req, res) => {
     try {
-        const { gameId, gameBatch, gameTeam } = req.query;
+        const { gameId, cmdLine } = req.query;
 
         // Validate mandatory parameters
-        if (!gameId || !gameTeam) {
+        if (!gameId || !cmdLine) {
             return res.status(400).send('Missing Parameter');
         }
 
+        // Check: Batch, needed for Market Info
+        let batch = null;
+        if (cmdLine !== 'Get_Batch') {
+            if (!gameBatch) {
+                return res.status(400).send('Missing Parameter');
+            }
+            batch = Number(gameBatch);
+            if (!Number.isInteger(batch)) {
+                return res.status(400).send('Batch must be integer');
+            }
+        }
+        
         // Validate parameter type
         if (!Number.isInteger(Number(gameBatch))) {
             return res.status(400).send('Batch must be integer');
