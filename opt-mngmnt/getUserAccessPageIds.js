@@ -10,12 +10,16 @@ router.get('/getUserAccessPageIds', async (req, res) => {
   try {
     const { gameId, rlId } = req.query;
 
-    if (!gameId) {
+    if (!gameId || !String(gameId).trim()) {
       return res.status(400).json({ message: 'Missing Parameter' });
     }
-
-    if (!Number.isInteger(Number(rlId))) {
-      return res.status(400).send('Data Type error');
+    if (
+      rlId === undefined ||
+      rlId === null ||
+      String(rlId).trim() === '' ||
+      !Number.isInteger(Number(rlId))
+    ) {
+      return res.status(400).json({ message: 'Invalid RL_Id' });
     }
 
     // Create request
@@ -23,7 +27,7 @@ router.get('/getUserAccessPageIds', async (req, res) => {
 
     // Map Parameters and datatypes SP Vs frontend
     request.input('Game_Id', sql.NVarChar(20), gameId);
-    request.input('RL_Id', sql.Int, Number(rlId)?. NULL);
+    request.input('RL_Id', sql.Int, Number(rlId));
 
     // Execute stored procedure and get response
     const result = await request.execute('UI_RBAC_Screen_Info');
