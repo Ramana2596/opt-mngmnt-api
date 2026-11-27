@@ -11,7 +11,7 @@ router.get('/getMarketFactorInfo', async (req, res) => {
         const { gameId, gameBatch, gameTeam } = req.query;
 
         // Validate mandatory parameters
-        if (!gameId || !gameBatch || !gameTeam) {
+        if (!gameId || !gameTeam) {
             return res.status(400).send('Missing Parameter');
         }
 
