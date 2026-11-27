@@ -8,17 +8,27 @@ const router = express.Router();
 
 router.get('/getTeamProgressInfo', async (req, res) => {
   try {
-    const { gameId, gameBatch, gameTeam } = req.query;
+        const { gameId, gameBatch, cmdLine } = req.query;
 
-    // Validate mandatory parameters
-    if (!gameId || !gameBatch || !gameTeam) {
-      return res.status(400).send('Missing Parameter');
-    }
+        // Check if parameters exist
+        if (!gameId || !cmdLine) {
+            return res.status(400).send('Missing Parameter');
+        }
 
-    // Validate parameter type
-    if (!Number.isInteger(Number(gameBatch))) {
-      return res.status(400).send('Batch must be integer');
-    }
+        if (!['Get_Batch', 'Team_Progress'].includes(cmdLine)) {
+            return res.status(400).send('Invalid CMD_Line');
+        }
+
+        // Validate batch only for Asset_Catalog
+        if (cmdLine === 'Team_Progress') {
+            if (!gameBatch) {
+                return res.status(400).send('Missing Batch');
+            }
+
+            if (!Number.isInteger(Number(gameBatch))) {
+                return res.status(400).send('Batch must be integer');
+            }
+        }
 
     // Create request 
     const request = new sql.Request();
