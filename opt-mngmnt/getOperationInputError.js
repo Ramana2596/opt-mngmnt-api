@@ -11,7 +11,7 @@ router.get('/getOperationInputError', async (req, res) => {
     try {
         const { gameId, gameBatch, gameTeam } = req.query || {};
 
-        // Validate mandatory parameters (userEmail is optional here)
+        // Validate mandatory parameters 
         if (!gameId || !gameBatch || !gameTeam) {
             return res.status(400).send('Missing Parameters');
         }
