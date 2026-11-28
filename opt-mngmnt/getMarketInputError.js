@@ -1,27 +1,40 @@
 
+// File: getMarketInputError.js
+// Purpose: Fetch Missing Market Input
+// Uses API format template - dbconfig at App Level, check parameter & its data type, response  
+
 const express = require('express');
 const sql = require('mssql');
-const dbConfig = require('../dbConfig');
 const router = express.Router();
 
-sql.connect(dbConfig).then(() => {
-    router.get('/getMarketInputError', async (req, res) => {
-        try {
+router.get('/getMarketInputError', async (req, res) => {
+    try {
+        const { gameId, gameBatch } = req.query || {};
 
-            const request = new sql.Request();
+        // Validate mandatory parameters (userEmail is optional here)
+        if (!gameId || !gameBatch) {
+            return res.status(400).send('Missing Parameters');
+        }
 
-            // Add Parameters, validating data types, as in Stored Procedure
-            request.input('Game_Id', sql.NVarChar, req.query.gameId || null);
-            request.input('Game_Batch', sql.Int, parseInt(req.query.gameBatch || null));
-            // request.input('Game_Team', sql.NVarChar, req.query.gameTeam || null); 
+        if (!Number.isInteger(Number(gameBatch))) {
+            return res.status(400).send('Batch must be integer');
+        }
 
-            const result = await request.execute('UI_Market_Input_Error');
+        const request = new sql.Request();
 
-            res.json(result.recordset);
-        }   catch (err) {
-            console.error('Query failed:', err);
-            res.status(500).send('Internal Server Error');
-        }   });
+        // Pass parameters to stored procedure
+        request.input('Game_Id', sql.NVarChar(20), gameId);
+        request.input('Game_Batch', sql.Int, Number(gameBatch));
+
+        // Execute SP and get response
+        const result = await request.execute('UI_Market_Input_Error');
+        return res.status(200).json(result.recordset || []);
+
+    } catch (err) {
+        // Catch error at API call level and log to console
+        console.error('Query failed:', err);
+        return res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;
